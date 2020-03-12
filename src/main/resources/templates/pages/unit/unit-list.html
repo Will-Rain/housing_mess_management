@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<meta charset="utf-8">
+	<title>单元列表</title>
+	<link rel="stylesheet" th:href="@{/css/oksub.css}">
+	<script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+</head>
+<body>
+<div class="ok-body">
+	<!--搜索区域-->
+	<div class="layui-row">
+		<form class="layui-form"  lay-filter="search">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<input type="hidden" id="id" name="id" class="layui-input">
+					<div class="layui-input-inline">
+						<select id="number" name="buildingNumber" lay-filter="number" lay-search></select>
+					</div>
+					<div class="layui-input-inline">
+						<button class="layui-btn" lay-submit="submit" lay-filter="search">
+							<i class="layui-icon">&#xe615;</i>
+						</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!--数据表格-->
+	<table class="layui-hide" id="tableId" lay-filter="tableFilter"></table>
+
+</div>
+<!--js逻辑-->
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script>
+	var editData;
+
+	layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils"], function () {
+		let table = layui.table;
+		let form = layui.form;
+		let okLayer = layui.okLayer;
+		let okUtils = layui.okUtils;
+		let $ = layui.jquery;
+		okLoading.close($);
+
+		let unitTable = table.render({
+			elem: '#tableId',
+			url: "/unit/getAllUnit",
+			where:{buildingId: ''},
+			limit: 5,
+			limits: [2,4,5,10,20],
+			page: true,
+			toolbar: "#toolbarTpl",
+			totalRow: true,
+			size: "sm",
+			cols: [
+					[
+				{type: "checkbox", fixed: "left"},
+				//这里没有写 unit的 id 列，则它就是隐藏域
+				{field: "building.buildingNumber", title: "楼宇号",width: 150,sort: true, fixed:true,
+					templet: "<div>{{d.building.buildingNumber}}</div>"},
+				{field: "unitNumber", title: "单元号", width: 175},
+				{field: "layerCount", title: "层数（层）",width: 175},
+				{field: "houseCount", title: "每层户数（户）",width: 175,totalRow:true},
+				{field: "elevatorCount", title: "电梯数量（台）",width: 175,totalRow:true},
+				{title: "操作", align: "center", fixed: "right", templet: "#operationTpl"}
+			]
+			],
+			done: function (res, curr, count) {
+				console.info(res.data);
+			}
+		});
+
+		table.on("toolbar(tableFilter)", function (obj) {
+			switch (obj.event) {
+				case "batchDel":
+					batchDel();
+					break;
+				case "add":
+					add();
+					break;
+				case "all":
+					all();
+					break;
+			}
+		});
+
+		table.on("tool(tableFilter)", function (obj) {
+			let data = obj.data;
+			switch (obj.event) {
+				case "edit":
+					edit(data);
+					break;
+				case "del":
+					del(data.id);
+					break;
+			}
+		});
+
+		function batchDel() {
+			okLayer.confirm("确定要批量删除吗？", function (index) {
+				layer.close(index);
+				let idArray = okUtils.tableBatchCheck(table,'id');
+
+				if (idArray.length !== 0) {
+					$.ajax({
+						url:"/unit/deleteUnit",
+						type:"delete",
+						data:{idArray: idArray},
+						traditional:true,
+						success:function (response) {
+							if(response === 1){
+								getSelectData();
+								unitTable.reload();
+								okUtils.tableSuccessMsg("删除成功");
+							}
+						},
+						btnAlignerror:function () {
+							console.log("error");
+						}
+					});
+				}
+			});
+		}
+
+		function add() {
+			okLayer.open("添加单元", "unit-add.html", "50%", "80%", null, function () {
+				getSelectData();
+				unitTable.reload();  // 表格重载
+
+			})
+		}
+
+		function all() {
+			unitTable.reload({
+				where:null,
+				page: {curr: 1}});
+		}
+
+		function edit(data) {
+			editData = data;
+			okLayer.open("更新单元信息", "unit-edit.html", "50%", "80%", function (layero) {
+				// var iframeWin = window[layero.find("iframe")[0]["name"]];
+				// iframeWin.initForm(data);
+			}, function () {
+				unitTable.reload();
+			})
+		}
+
+		function del(id) {
+			okLayer.confirm("确定要删除吗？", function () {
+				var idArray = [];
+				idArray.push(id);
+				$.ajax({
+					url:"/unit/deleteUnit",
+					type:"delete",
+					data:{idArray: idArray},
+					traditional:true,
+					success:function (response) {
+						if(response === 1){
+							getSelectData();
+							unitTable.reload();
+							okUtils.tableSuccessMsg("删除成功");
+						}
+					},
+					error:function () {
+						console.log("error");
+					}
+				});
+
+			})
+		}
+
+
+		function getSelectData(){
+			okUtils.ajax("/building/selectDistinctNumber", "get",
+					{}, false).done(function (response) {
+				// console.log(response.length);
+				let select = $("select[id='number']");
+				select.html("");
+				select.append("<option value=''>请选择楼宇号</option>");
+				$.each(response, function (i, item) {
+					select.append("<option value="+ item+">"+ item+"号楼</option>");
+				});
+
+				form.render('select','search');
+
+			}).fail(function (error) {
+				console.log(error)
+			});
+		}
+
+		layer.ready(function () {
+			getSelectData();
+		});
+
+		form.on("select(number)", function (data) {
+			if(data.value!=='' && data.value!=null){
+				okUtils.ajax("/building/selectDistinctId", "get",
+						{number:data.value}, false).done(function (response) {
+					$("#id").val(response);
+					// console.log($("#id").val());
+					form.render();
+
+				}).fail(function (error) {
+					console.log(error)
+				});
+			}
+		});
+
+		form.on("submit(search)", function (data) {
+			unitTable.reload({
+				where: {buildingId: data.field.id},
+				page: {curr: 1}
+			});
+			getSelectData();
+
+			return false;
+		});
+
+	})
+</script>
+<!-- 头工具栏模板 -->
+<script type="text/html" id="toolbarTpl">
+	<div class="layui-btn-container">
+		<button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="all">查看全部</button>
+		<button shiro:hasPermission="1" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDel">批量删除</button>
+		<button shiro:hasPermission="1" class="layui-btn layui-btn-sm" lay-event="add">添加单元</button>
+	</div>
+</script>
+<!-- 行工具栏模板 -->
+<script type="text/html" id="operationTpl" shiro:hasPermission="1">
+	<a href="javascript:" title="编辑" lay-event="edit"><i class="layui-icon" style="color: blue">&#xe642;</i></a>
+	<a href="javascript:" title="删除" lay-event="del"><i class="layui-icon" style="color: red">&#xe640;</i></a>
+</script>
+</body>
+</html>
