@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>添加用户</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" th:href="@{/css/oksub.css}">
+	<script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+</head>
+<body>
+<div class="ok-body">
+	<!--form表单-->
+	<form class="layui-form layui-form-pane ok-form">
+		<div class="layui-form-item">
+			<label class="layui-form-label">用户名</label>
+			<div class="layui-input-block">
+				<input type="text" name="name" placeholder="请输入用户名" autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">密码</label>
+			<div class="layui-input-block">
+				<input type="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input"
+					   lay-verify="required|password">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">角色</label>
+			<div class="layui-input-block">
+				<select name="role">
+					<option value="0">普通管理员</option>
+					<option value="1">超级管理员</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit="" lay-filter="add">立即提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!--js逻辑-->
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script>
+	layui.use(["element", "form", "okLayer", "okUtils"], function () {
+		let form = layui.form;
+		let okLayer = layui.okLayer;
+		let okUtils = layui.okUtils;
+		okLoading.close();
+
+		form.verify({
+			password:  [/^[\S]{6,50}$/, "密码必须6到50位，且不能出现空格"]
+		});
+
+
+		form.on("submit(add)", function (data) {
+			okUtils.ajax("/administrator/addAdmin", "post", data.field, true).done(function (response) {
+				if(response === 1) {
+					console.log(response);
+					okLayer.greenTickMsg("添加成功", function () {
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					});
+				}
+				else if(response === 2){
+					okLayer.yellowSighMsg("该账号已存在",function () {
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					});
+				}
+				else if(response === 0){
+					okLayer.yellowSighMsg("添加失败",function () {
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					});
+				}
+			}).fail(function (error) {
+				console.log(error)
+			});
+			return false;
+		});
+	});
+</script>
+</body>
+</html>

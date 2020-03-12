@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<meta charset="UTF-8">
+	<title>更新单元信息</title>
+	<link rel="stylesheet" th:href="@{/css/oksub.css}">
+	<script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+</head>
+<body>
+<div class="ok-body" shiro:hasPermission="1">
+	<!--form表单-->
+	<form class="layui-form ok-form" lay-filter="filter">
+
+		<input type="hidden" name="id" class="layui-input">
+		<input type="hidden" name="buildingId" class="layui-input">
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">楼宇号</label>
+			<div class="layui-input-block">
+				<input type="text" name="buildingNumber" readonly unselectable="on" autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">单元号</label>
+			<div class="layui-input-block">
+				<input type="text" name="unitNumber" readonly unselectable="on" autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">层数</label>
+			<div class="layui-input-block">
+				<input type="text" name="layerCount" readonly unselectable="on" autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">每层户数</label>
+			<div class="layui-input-block">
+				<input type="text" name="houseCount" readonly unselectable="on" autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">电梯数量</label>
+			<div class="layui-input-block">
+				<input type="text" name="elevatorCount" placeholder="请输入本单元中电梯数量" autocomplete="off" class="layui-input"
+					   lay-verify="required|number">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="edit">立即提交</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!--js逻辑-->
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script>
+	let initData;
+	function initForm(data) {
+		let unit = {
+			id: data.id,
+			unitNumber: data.unitNumber,
+			layerCount: data.layerCount,
+			houseCount: data.houseCount,
+			elevatorCount: data.elevatorCount,
+			buildingId: data.building.id,
+			buildingNumber: data.building.buildingNumber
+		};
+		initData = unit;
+	}
+
+	layui.use(["element", "form", "okLayer", "okUtils"], function () {
+		let form = layui.form;
+		let okLayer = layui.okLayer;
+		let okUtils = layui.okUtils;
+		okLoading.close();
+
+		initForm(parent.editData);
+		form.val("filter",initData);
+		form.render();
+
+		form.verify({
+			number: [/^[0-9]*$/,"该项必须是数字"]
+		});
+
+		form.on("submit(edit)", function (data) {
+			okUtils.ajax("/unit/updateUnit", "put",{id:data.field.id,
+				buildingId:data.field.buildingId,elevatorCount:data.field.elevatorCount
+			}, true).done(function (response) {
+				console.log(response);
+				if(response === 1){
+					okLayer.greenTickMsg("修改成功", function () {
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					});
+				}
+				else{
+					okLayer.redCrossMsg("修改失败", function () {
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					});
+				}
+			}).fail(function (error) {
+				console.log(error)
+			});
+			return false;
+		});
+	})
+</script>
+</body>
+</html>

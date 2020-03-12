@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<meta charset="UTF-8">
+	<title>更新管理员信息</title>
+	<link rel="stylesheet" th:href="@{/css/oksub.css}">
+	<script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+</head>
+<body>
+<div class="ok-body" shiro:hasPermission="1">
+	<!--form表单-->
+	<form class="layui-form ok-form" lay-filter="filter">
+		<div class="layui-form-item">
+			<label class="layui-form-label" disabled>管理员账号</label>
+			<div class="layui-input-block">
+				<input type="text" name="name" readonly unselectable="on" placeholder="请输入账号" autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">密码</label>
+			<div class="layui-input-block">
+				<input type="text" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">角色</label>
+			<div class="layui-input-block">
+				<select name="role">
+					<option value="0">普通管理员</option>
+					<option value="1">超级管理员</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit="" lay-filter="edit">立即提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!--js逻辑-->
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script>
+
+	let initData;
+
+	function initForm(data) {
+
+		// let jsonString = JSON.stringify(data);
+		// initData = JSON.parse(jsonString);
+		// console.log("data = "+data);
+		initData = {
+			name: data.name,
+			password: data.password,
+			role: data.role
+		};
+	}
+
+	layui.use(["element", "form", "laydate", "okLayer", "okUtils"], function () {
+		let form = layui.form;
+		let okLayer = layui.okLayer;
+		let okUtils = layui.okUtils;
+		okLoading.close();
+
+		initForm(parent.editData);
+		form.val("filter",initData);
+		form.render();
+
+		form.on("submit(edit)", function (data) {
+			let Administrator = {
+				"name": data.field.name,
+				"password": data.field.password,
+				"role": data.field.role
+			};
+			okUtils.ajax("/administrator/updateAdmin", "put", Administrator, true).done(function (response) {
+				console.log(response);
+				if(response === 1){
+					okLayer.greenTickMsg("修改成功", function () {
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					});
+				}
+				else{
+					okLayer.redCrossMsg("修改失败", function () {
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					});
+				}
+			}).fail(function (error) {
+				console.log(error)
+			});
+			return false;
+		});
+	})
+</script>
+</body>
+</html>

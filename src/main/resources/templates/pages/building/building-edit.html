@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<meta charset="UTF-8">
+	<title>更新楼宇信息</title>
+	<link rel="stylesheet" th:href="@{/css/oksub.css}">
+	<script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+</head>
+<body>
+<div class="ok-body" shiro:hasPermission="1">
+	<!--form表单-->
+	<form class="layui-form ok-form" lay-filter="filter">
+
+		<input type="hidden" name="id" class="layui-input">
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">楼宇号</label>
+			<div class="layui-input-block">
+				<input type="text" name="buildingNumber" readonly unselectable="on" autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">建筑时间</label>
+			<div class="layui-input-block">
+				<input type="text" name="constructionTime" readonly unselectable="on" autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">物业公司</label>
+			<div class="layui-input-block">
+				<input type="text" name="propertyManagementCompany" placeholder="请输入物业管理公司" autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">楼宇负责人</label>
+			<div class="layui-input-block">
+				<input type="text" name="buildingPrincipal" autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">单元数量</label>
+			<div class="layui-input-block">
+				<input type="text" name="unitCount" readonly unselectable="on" autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="edit">立即提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!--js逻辑-->
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script>
+	let initData;
+
+	function formatDate(now) {
+		var year=now.getFullYear();  //取得4位数的年份
+		var month=now.getMonth()+1;  //取得日期中的月份，其中0表示1月，11表示12月
+		var date=now.getDate();      //返回日期月份中的天数（1到31）
+		return year+"-"+month+"-"+date;
+	}
+
+	function initForm(data) {
+		let d=new Date(data.constructionTime);
+		data.constructionTime = formatDate(d); //把时间戳格式化为日期
+		let jsonString = JSON.stringify(data);
+		// console.log(jsonString);
+		initData = JSON.parse(jsonString);
+	}
+
+	layui.use(["element", "form", "okLayer", "okUtils"], function () {
+		let form = layui.form;
+		let okLayer = layui.okLayer;
+		let okUtils = layui.okUtils;
+		okLoading.close();
+		initForm(parent.editData);
+		form.val("filter", initData);
+		form.render();
+
+		form.on("submit(edit)", function (data) {
+			okUtils.ajax("/building/updateBuilding", "put", data.field, true).done(function (response) {
+				console.log(response);
+				if(response === 1){
+					okLayer.greenTickMsg("修改成功", function () {
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					});
+				}
+				else{
+					okLayer.redCrossMsg("修改失败", function () {
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					});
+				}
+			}).fail(function (error) {
+				console.log(error)
+			});
+			return false;
+		});
+	})
+</script>
+</body>
+</html>

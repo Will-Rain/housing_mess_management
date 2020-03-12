@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<meta charset="UTF-8">
+	<title>添加单元</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" th:href="@{/css/oksub.css}">
+	<script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+</head>
+<body>
+<div class="ok-body" shiro:hasPermission="1">
+	<!--form表单-->
+	<form class="layui-form layui-form-pane ok-form">
+		<input type="hidden" name="id" class="layui-input" value="">
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">楼宇号</label>
+			<div class="layui-input-inline">
+				<select id="number" name="buildingNumber" lay-filter="number" lay-search lay-verify="required"></select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">单元号</label>
+			<div class="layui-input-block">
+				<input type="text" name="unitNumber" placeholder="请输入单元号" autocomplete="off" class="layui-input"
+					   id="unitNumber" lay-verify="required|number">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">单元层数</label>
+			<div class="layui-input-block">
+				<input type="text" name="layerCount" placeholder="请输入楼层数量" autocomplete="off" class="layui-input"
+					   id="layerCount" lay-verify="required|number">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">每层户数</label>
+			<div class="layui-input-block">
+				<input type="text" name="houseCount" placeholder="请输入每层户数（每层数量不超过10户）" autocomplete="off" class="layui-input"
+					   id="houseCount" lay-verify="required|number|ten">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">电梯数量</label>
+			<div class="layui-input-block">
+				<input type="text" name="elevatorCount" placeholder="请输入电梯数量" autocomplete="off" class="layui-input"
+					   lay-verify="required|number">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit="" lay-filter="add">立即提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!--js逻辑-->
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script>
+	layui.use(["element", "form", "okLayer", "okUtils"], function () {
+		let form = layui.form;
+		let okLayer = layui.okLayer;
+		let okUtils = layui.okUtils;
+		let $ = layui.$;
+		okLoading.close();
+
+		form.verify({
+			number: [/^[0-9]*$/,"该项必须是数字"],
+			ten: [/^([1-9]|10)$/,"每层房屋数量不超过10户"]
+		});
+
+		function getSelectData(){
+			okUtils.ajax("/building/selectDistinctNumber", "get",
+					{}, false).done(function (response) {
+				// console.log(response.length);
+				let select = $("select[id='number']");
+				select.html("");
+				select.append("<option value=''>请选择楼宇号</option>");
+				$.each(response, function (i, item) {
+					select.append("<option value="+ item+">"+ item+"号楼</option>");
+				});
+
+				form.render();
+
+			}).fail(function (error) {
+				console.log(error)
+			});
+		}
+
+		layer.ready(function () {
+			getSelectData();
+		});
+
+
+		form.on("submit(add)", function (data) {
+			okUtils.ajax("/unit/addUnit", "post", data.field, true).done(function (response) {
+				if(response === 1) {
+					console.log(response);
+					okLayer.greenTickMsg("添加成功", function () {
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					});
+				}
+				else if(response === 2){
+					okLayer.yellowSighMsg("该楼宇已存在此单元，不可重复添加",function () {
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					});
+				}
+				else if(response === 0){
+					okLayer.yellowSighMsg("添加失败",function () {
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					});
+				}
+			}).fail(function (error) {
+				console.log(error)
+			});
+			return false;
+		});
+	});
+</script>
+</body>
+</html>
