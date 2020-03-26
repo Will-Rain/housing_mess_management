@@ -64,7 +64,10 @@ public interface BuildingService {
      * @return 是否成功
      */
     boolean deleteById(String id);
-
+    //获得唯一的楼宇号
     List<Integer> selectDistinctNumber();
+
+    //获取楼宇数量
+    String getBuildingCount();
 
 }

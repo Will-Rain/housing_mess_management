@@ -2,23 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="utf-8">
-	<title>居民住房信息管理系统</title>
+	<title>居民住房信息管理系统-控制台</title>
 	<link rel="stylesheet" th:href="@{/css/oksub.css}" media="all"/>
-	<script type="text/javascript" th:src="@{/lib/echarts/echarts.min.js}"></script>
-	<script type="text/javascript" th:src="@{/lib/echarts/echarts.theme.js}"></script>
-	<script type="text/javascript" th:src="@{/lib/echarts/world/js/china.js}"></script>
+	<script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
 </head>
 <body class="ok-body-scroll console">
+
+
 <div class="ok-body home">
 	<div class="layui-row layui-col-space15">
 		<div class="layui-col-xs6 layui-col-md3">
 			<div class="layui-card">
 				<div class="ok-card-body">
 					<div class="img-box" ok-pc-in-show>
-						<img src="../images/home-01.png" alt="none"/>
+						<img th:src="@{/images/building.png}" alt="none"/>
 					</div>
 					<div class="cart-r">
-						<div class="stat-text incomes-num">0</div>
+						<div class="stat-text building-num">0</div>
 						<div class="stat-heading">楼宇数量</div>
 					</div>
 				</div>
@@ -29,10 +29,10 @@
 			<div class="layui-card ">
 				<div class="ok-card-body">
 					<div class="img-box" ok-pc-in-show>
-						<img src="../images/home-02.png" alt="none"/>
+						<img th:src="@{/images/house.png}" alt="none"/>
 					</div>
 					<div class="cart-r">
-						<div class="stat-text goods-num">0</div>
+						<div class="stat-text house-num">0</div>
 						<div class="stat-heading">住房数量</div>
 					</div>
 				</div>
@@ -43,10 +43,10 @@
 			<div class="layui-card">
 				<div class="ok-card-body">
 					<div class="img-box" ok-pc-in-show>
-						<img src="../images/home-03.png" alt="none"/>
+						<img th:src="@{/images/resident.png}" alt="none"/>
 					</div>
 					<div class="cart-r">
-						<div class="stat-text blogs-num">0</div>
+						<div class="stat-text resident-num">0</div>
 						<div class="stat-heading">居民数量</div>
 					</div>
 				</div>
@@ -57,111 +57,114 @@
 			<div class="layui-card">
 				<div class="ok-card-body">
 					<div class="img-box" ok-pc-in-show>
-						<img src="../images/home-04.png" alt="none"/>
+						<img th:src="@{/images/admin.png}" alt="none"/>
 					</div>
 					<div class="cart-r">
-						<div class="stat-text fans-num">0</div>
-						<div class="stat-heading">用户</div>
+						<div class="stat-text admin-num">0</div>
+						<div class="stat-heading">管理员数量</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="layui-row layui-col-space15">
-		<div class="layui-col-md8">
-			<div class="layui-card">
-				<div class="layui-card-header">
-					<div class="ok-card-title">用户排行榜</div>
-				</div>
-				<div class="ok-card-body map-body">
-					<div style="height: 100%;" id="userSourceMap"></div>
-				</div>
-			</div>
-		</div>
-
-		<div class="layui-col-md4">
-			<div class="layui-card">
-				<div class="layui-card-header">
-					<div class="ok-card-title">用户访问</div>
-				</div>
-				<div class="ok-card-body map-body">
-					<div class="progress-box ">
-						<div class="pro-head">
-							<img src="../images/face.jpg" alt="none"/>
-						</div>
-						<div class="pro-data">
-							<h4 class="por-title">Visits</h4>
-							<div class="por-txt pro-a">用户比例</div>
-							<div class="layui-progress" lay-filter="pro-a">
-								<div class="layui-progress-bar per-bg-a" lay-percent="35%"></div>
-							</div>
-						</div>
-					</div>
-
-					<div class="progress-box ">
-						<div class="pro-head">
-							<img src="../images/face.jpg" alt="none"/>
-						</div>
-						<div class="pro-data">
-							<h4 class="por-title">Visits</h4>
-							<div class="por-txt pro-a">用户比例</div>
-							<div class="layui-progress" lay-filter="pro-b">
-								<div class="layui-progress-bar per-bg-b" lay-percent="15%"></div>
-							</div>
-						</div>
-					</div>
-
-					<div class="progress-box ">
-						<div class="pro-head">
-							<img src="../images/face.jpg" alt="none"/>
-						</div>
-						<div class="pro-data">
-							<h4 class="por-title">Visits</h4>
-							<div class="por-txt pro-c">用户比例</div>
-							<div class="layui-progress" lay-filter="pro-c">
-								<div class="layui-progress-bar per-bg-c" lay-percent="20%"></div>
-							</div>
-						</div>
-					</div>
-
-					<div class="progress-box ">
-						<div class="pro-head">
-							<img src="../images/face.jpg" alt="none"/>
-						</div>
-						<div class="pro-data">
-							<h4 class="por-title">Visits</h4>
-							<div class="por-txt pro-d">用户比例</div>
-							<div class="layui-progress" lay-filter="pro-d">
-								<div class="layui-progress-bar per-bg-d" lay-percent="30%"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 
 	<div class="layui-row layui-col-space15">
 		<div class="layui-col-md6">
 			<div class="layui-card">
-				<div class="ok-card-body ">
-					<table id="userData" lay-filter="userdata"></table>
-				</div>
+					<div class="layui-card-header">
+						<div class="ok-card-title">近十年居民数量变化图</div>
+					</div>
+					<div class="ok-card-body map-body">
+						<div style="height: 400px;" id="ResidentNumberChart"></div>
+					</div>
 			</div>
 		</div>
 		<div class="layui-col-md6">
 			<div class="layui-card">
-				<div class="ok-card-body ">
-					<div class="map-china" id="userLocationMap"></div>
+				<div class="layui-card-header">
+					<div class="ok-card-title">近十年住房数量变化图</div>
+				</div>
+				<div class="ok-card-body map-body">
+					<div style="height: 400px;" id="HouseNumberChart"></div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
 </body>
-<script type="text/javascript" th:src="@{/lib/layui/layui.js}"></script>
-<script type="text/javascript" th:src="@{/js/console.js}"></script>
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script th:src="@{/lib/echarts/echarts.min.js}"></script>
+<!--<script type="text/javascript" th:src="@{/js/console.js}"></script>-->
+<script>
+	layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils"], function () {
+		let table = layui.table;
+		let form = layui.form;
+		let okLayer = layui.okLayer;
+		let okUtils = layui.okUtils;
+		let $ = layui.jquery;
+		okLoading.close($);
+//获取顶部的数量
+		layer.ready(function () {
+
+			okUtils.ajax("/building/getBuildingCount", "get",
+					{}, false).done(function (response) {
+				$(".building-num").html(response);
+			}).fail(function (error) {
+				console.log(error)
+			});
+			okUtils.ajax("/house/getHouseCount", "get",
+					{}, false).done(function (response) {
+				$(".house-num").html(response);
+				}).fail(function (error) {
+					console.log(error)
+				});
+			okUtils.ajax("/resident/getResidentCount", "get",
+					{}, false).done(function (response) {
+				$(".resident-num").html(response);
+			}).fail(function (error) {
+				console.log(error)
+			});
+			okUtils.ajax("/administrator/getAdminCount", "get",
+					{}, false).done(function (response) {
+				$(".admin-num").html(response);
+			}).fail(function (error) {
+				console.log(error)
+			});
+		});
+
+//    ResidentNumberChart 条形图
+		var ResidentNumberChartOption = {
+			legend: {left: 0},
+			toolbox: {
+				show: true,
+				right: '10%',
+				feature: {
+					mark: {show: true},
+					magicType: {show: true, type: ['line', 'bar']},
+					restore: {show: true},
+					saveAsImage: {show: true}
+				}
+			},
+			tooltip: {},
+			xAxis: {type: 'category', axisTick: {alignWithLabel: true}},
+			yAxis: {},
+			series: [
+				{
+					name: "人数",
+					type: 'bar',
+					//设置柱状图大小
+					barWidth: 40,
+				}
+			]
+		};
+
+
+
+			});
+</script>
 </html>
 
 

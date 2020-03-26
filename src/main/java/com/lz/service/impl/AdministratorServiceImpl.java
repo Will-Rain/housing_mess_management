@@ -102,4 +102,9 @@ public class AdministratorServiceImpl implements AdministratorService {
     public List<Map<String, Object>> selectToChart(Administrator administrator) {
         return this.administratorDao.selectToChart(administrator);
     }
+
+    @Override
+    public String getAdminCount() {
+        return this.administratorDao.getAdminCount();
+    }
 }

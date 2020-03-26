@@ -67,5 +67,6 @@ public interface AdministratorService {
     List<String> selectDistinctRole(String name, String password);
 
     List<Map<String,Object>> selectToChart(Administrator administrator);
-
+    //获取管理员数量
+    String getAdminCount();
 }

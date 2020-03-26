@@ -68,4 +68,7 @@ public interface HouseService {
     //查询住房出售情况
     List<Map<String,Object>> saleChart(String buildingId, String unitId);
     List<House> saleTable(String buildingId, String unitId, int offset, int limit);
+
+    //获取住房数量
+    String getHouseCount();
 }

@@ -10,14 +10,14 @@
   {
     "title": "管理员信息管理",
     "href": "",
-    "icon": "&#xe62e;",
+    "icon": "&#xe612;",
     "spread": false,
     "children": [
       {
         "title": "管理员信息列表",
         "href": "pages/admin/admin-list.html",
         "fontFamily": "layui-icon",
-        "icon": "&#xe62e;",
+        "icon": "&#xe62d;",
         "spread": false
       }
     ]
@@ -25,7 +25,7 @@
   {
     "title": "楼房信息管理",
     "href": "",
-    "icon": "&#xe6b8;",
+    "icon": "&#xe68e;",
     "spread": false,
     "children": [
       {
@@ -68,7 +68,7 @@
   {
     "title": "图形展示",
     "href": "",
-    "icon": "&#xe62c;",
+    "icon": "&#xe629;",
     "spread": false,
     "children": [
       {

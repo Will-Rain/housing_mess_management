@@ -84,4 +84,7 @@ public interface HouseDao {
     List<Map<String,Object>> saleChart(String buildingId, String unitId);
     List<House> saleTable(@Param("buildingId") String buildingId, @Param("unitId") String unitId,
                           @Param("offset") int offset, @Param("limit") int limit);
+
+    //获取住房数量
+    String getHouseCount();
 }

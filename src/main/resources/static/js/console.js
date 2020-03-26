@@ -7,7 +7,7 @@ layui.use(["okUtils", "table", "okCountUp", "okMock"], function () {
     var $ = layui.jquery;
 
     /**
-     * 收入、商品、博客、用户
+     * 头部
      */
     function statText() {
         var elem_nums = $(".stat-text");

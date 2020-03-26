@@ -312,6 +312,10 @@
             and house.id = resident.house_id
         group by xData
     </select>
+<!--    获取居民数量-->
+    <select id="getResidentCount" resultType="java.lang.String">
+        select count(*) from resident;
+    </select>
 
 
 </mapper>

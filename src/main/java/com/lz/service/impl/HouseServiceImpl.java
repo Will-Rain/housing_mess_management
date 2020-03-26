@@ -113,5 +113,10 @@ public class HouseServiceImpl implements HouseService {
         return this.houseDao.saleTable(buildingId, unitId, offset, limit);
     }
 
+    @Override
+    public String getHouseCount() {
+        return this.houseDao.getHouseCount();
+    }
+
 
 }

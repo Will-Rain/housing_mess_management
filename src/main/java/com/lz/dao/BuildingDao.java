@@ -69,5 +69,6 @@ public interface BuildingDao {
     int deleteById(String id);
 
     List<Integer> selectDistinctNumber();
-
+    //获取楼宇数量
+    String getBuildingCount();
 }

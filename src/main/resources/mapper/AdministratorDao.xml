@@ -99,5 +99,8 @@
         select count(name) as count,role from administrator
         group by role;
     </select>
+    <select id="getAdminCount" resultType="java.lang.String">
+        select count(*) from administrator;
+    </select>
 
 </mapper>

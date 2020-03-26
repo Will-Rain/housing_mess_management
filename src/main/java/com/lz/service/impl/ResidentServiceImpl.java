@@ -147,5 +147,11 @@ public class ResidentServiceImpl implements ResidentService {
         return this.residentDao.statisticalPeopleCount();
     }
 
+    //获取居民数量
+    @Override
+    public String getResidentCount() {
+        return this.residentDao.getResidentCount();
+    }
+
 
 }

@@ -100,4 +100,10 @@ public class BuildingController {
     public String selectDistinctId(String number){
         return buildingService.queryByNumber(Integer.parseInt(number)).getId();
     }
+
+    //获取楼宇数量
+    @RequestMapping("/getBuildingCount")
+    public String getBuildingCount() {
+        return buildingService.getBuildingCount();
+    }
 }

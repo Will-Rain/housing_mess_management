@@ -214,5 +214,8 @@
             limit #{offset}, #{limit}
         </if>
     </select>
+    <select id="getHouseCount" resultType="java.lang.String">
+        select count(*) from house;
+    </select>
 
 </mapper>

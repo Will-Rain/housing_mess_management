@@ -180,9 +180,15 @@ public class ResidentController {
         return residentService.statisticalParty(buildingId, unitId);
     }
 
-    //统计统计
+    //人数统计图
     @RequestMapping("/statisticalPeopleCount")
     public List<Map<String, Object>> statisticalPeopleCount() {
         return residentService.statisticalPeopleCount();
+    }
+
+    //获取居民数量
+    @RequestMapping("/getResidentCount")
+    public String getResidentCount() {
+        return residentService.getResidentCount();
     }
 }

@@ -3,6 +3,7 @@ package com.lz.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.lz.entity.Administrator;
 import com.lz.service.AdministratorService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -135,5 +136,11 @@ public class AdministratorController {
 //
 //        return map;
 //    }
+
+    //获取管理员数量
+    @GetMapping("/getAdminCount")
+    public String getAdminCount() {
+        return administratorService.getAdminCount();
+    }
 
 }

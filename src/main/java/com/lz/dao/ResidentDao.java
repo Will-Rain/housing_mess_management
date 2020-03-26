@@ -99,4 +99,7 @@ public interface ResidentDao {
     //人数统计
     List<Map<String,Object>> statisticalPeopleCount();
 
+    //获取居民数量
+    String getResidentCount();
+
 }

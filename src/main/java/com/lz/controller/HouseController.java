@@ -153,4 +153,10 @@ public class HouseController {
                 SerializerFeature.DisableCircularReferenceDetect))); //分页查询
         return obj.toJSONString();
     }
+
+    //获取住房数量
+    @RequestMapping("/getHouseCount")
+    public String getHouseCount() {
+        return houseService.getHouseCount();
+    }
 }

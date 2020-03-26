@@ -102,4 +102,7 @@
     <select id="selectDistinctNumber" resultType="java.lang.Integer">
         select distinct building_number from building;
     </select>
+    <select id="getBuildingCount" resultType="java.lang.String">
+        select count(*) from building;
+    </select>
 </mapper>

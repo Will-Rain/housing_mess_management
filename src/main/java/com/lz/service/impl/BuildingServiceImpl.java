@@ -131,4 +131,9 @@ public class BuildingServiceImpl implements BuildingService {
     public List<Integer> selectDistinctNumber() {
         return this.buildingDao.selectDistinctNumber();
     }
+
+    @Override
+    public String getBuildingCount() {
+        return this.buildingDao.getBuildingCount();
+    }
 }
