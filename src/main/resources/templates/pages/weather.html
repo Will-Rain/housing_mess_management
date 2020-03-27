@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>中国天气</title>
+<!--    <title>中国天气</title>-->
     <style>
         #weather-float-he {
             position: fixed !important;
@@ -28,11 +28,14 @@
     </style>
 </head>
 <body>
-<script type="text/javascript">
-    WIDGET = {
-        FID: 'FS17XUsOiV'
-    }
-</script>
-<script type="text/javascript" src="https://apip.weatherdt.com/float/static/js/r.js?v=1111"></script>
+<div id="weather-float-he"></div>
+<a href="baidu.com"></a>
+<!-- weather -->
+    <script type="text/javascript">
+        // WIDGET = {FID: 'bWvASzJma7'} //切换城市
+        WIDGET = {FID: 'v0COwzgZci'} //定位城市
+    </script>
+    <script type="text/javascript" src="https://apip.weatherdt.com/float/static/js/r.js?v=1111"></script>
+
 </body>
 </html>

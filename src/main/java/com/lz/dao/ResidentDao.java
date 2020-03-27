@@ -102,4 +102,5 @@ public interface ResidentDao {
     //获取居民数量
     String getResidentCount();
 
+
 }

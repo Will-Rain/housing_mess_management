@@ -218,4 +218,12 @@
         select count(*) from house;
     </select>
 
+    <!--    近十年居民数量变化图-->
+    <select id="ResidentCheckInNumberChart" resultType="java.util.Map">
+        select year(check_in_time) as xData, count(*) as count
+        from house, resident
+        where resident.house_id = house.id
+        group by xData
+    </select>
+
 </mapper>

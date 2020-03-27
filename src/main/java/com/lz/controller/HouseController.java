@@ -7,6 +7,7 @@ import com.lz.entity.House;
 import com.lz.entity.Unit;
 import com.lz.service.HouseService;
 import com.lz.service.UnitService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -159,4 +160,11 @@ public class HouseController {
     public String getHouseCount() {
         return houseService.getHouseCount();
     }
+
+    @GetMapping("/ResidentCheckInNumberChart")
+    public List<Map<String, Object>> ResidentCheckInNumberChart() {
+        return houseService.ResidentCheckInNumberChart();
+    }
+
+
 }

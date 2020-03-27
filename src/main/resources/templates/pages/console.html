@@ -5,6 +5,10 @@
 	<title>居民住房信息管理系统-控制台</title>
 	<link rel="stylesheet" th:href="@{/css/oksub.css}" media="all"/>
 	<script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+	<style>
+		.transform{font-size:40px;display:block;cursor:pointer;transition:All .4s ease-in-out;-webkit-transition:All .4s ease-in-out;-moz-transition:All .4s ease-in-out;-o-transition:All .4s ease-in-out}
+		.transform:hover{transform:rotate(360deg);-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-o-transform:rotate(360deg);-ms-transform:rotate(360deg)}
+	</style>
 </head>
 <body class="ok-body-scroll console">
 
@@ -14,7 +18,7 @@
 		<div class="layui-col-xs6 layui-col-md3">
 			<div class="layui-card">
 				<div class="ok-card-body">
-					<div class="img-box" ok-pc-in-show>
+					<div class="img-box transform" ok-pc-in-show>
 						<img th:src="@{/images/building.png}" alt="none"/>
 					</div>
 					<div class="cart-r">
@@ -28,7 +32,7 @@
 		<div class="layui-col-xs6 layui-col-md3">
 			<div class="layui-card ">
 				<div class="ok-card-body">
-					<div class="img-box" ok-pc-in-show>
+					<div class="img-box transform" ok-pc-in-show>
 						<img th:src="@{/images/house.png}" alt="none"/>
 					</div>
 					<div class="cart-r">
@@ -42,7 +46,7 @@
 		<div class="layui-col-xs6 layui-col-md3">
 			<div class="layui-card">
 				<div class="ok-card-body">
-					<div class="img-box" ok-pc-in-show>
+					<div class="img-box transform" ok-pc-in-show>
 						<img th:src="@{/images/resident.png}" alt="none"/>
 					</div>
 					<div class="cart-r">
@@ -56,7 +60,7 @@
 		<div class="layui-col-xs6 layui-col-md3">
 			<div class="layui-card">
 				<div class="ok-card-body">
-					<div class="img-box" ok-pc-in-show>
+					<div class="img-box transform" ok-pc-in-show>
 						<img th:src="@{/images/admin.png}" alt="none"/>
 					</div>
 					<div class="cart-r">
@@ -70,26 +74,26 @@
 
 
 	<div class="layui-row layui-col-space15">
-		<div class="layui-col-md6">
+		<div class="layui-col-md12">
 			<div class="layui-card">
 					<div class="layui-card-header">
-						<div class="ok-card-title">近十年居民数量变化图</div>
+						<div class="ok-card-title">居民增长折线图</div>
 					</div>
 					<div class="ok-card-body map-body">
-						<div style="height: 400px;" id="ResidentNumberChart"></div>
+						<div style="height: 400px;" id="ResidentCheckInNumberChart"></div>
 					</div>
 			</div>
 		</div>
-		<div class="layui-col-md6">
-			<div class="layui-card">
-				<div class="layui-card-header">
-					<div class="ok-card-title">近十年住房数量变化图</div>
-				</div>
-				<div class="ok-card-body map-body">
-					<div style="height: 400px;" id="HouseNumberChart"></div>
-				</div>
-			</div>
-		</div>
+<!--		<div class="layui-col-md6">-->
+<!--			<div class="layui-card">-->
+<!--				<div class="layui-card-header">-->
+<!--					<div class="ok-card-title">近十年住房数量变化图</div>-->
+<!--				</div>-->
+<!--				<div class="ok-card-body map-body">-->
+<!--					<div style="height: 400px;" id="HouseNumberChart"></div>-->
+<!--				</div>-->
+<!--			</div>-->
+<!--		</div>-->
 	</div>
 </div>
 
@@ -135,8 +139,9 @@
 			});
 		});
 
+
 //    ResidentNumberChart 条形图
-		var ResidentNumberChartOption = {
+		var ResidentCheckInNumberChartOption = {
 			legend: {left: 0},
 			toolbox: {
 				show: true,
@@ -149,21 +154,51 @@
 				}
 			},
 			tooltip: {},
-			xAxis: {type: 'category', axisTick: {alignWithLabel: true}},
+			dataZoom: [
+				{
+					type: 'slider',
+					start: 30,
+					end: 80
+				}
+			],
+			xAxis: {
+				type: 'category',
+			},
 			yAxis: {},
 			series: [
 				{
 					name: "人数",
-					type: 'bar',
-					//设置柱状图大小
-					barWidth: 40,
+					type: 'line',
 				}
 			]
 		};
-
-
-
+		function getResidentCheckInNumberChartData(chart) {
+			okUtils.ajax("/house/ResidentCheckInNumberChart", "get","", false).done(function (response) {
+				console.log(JSON.stringify(response));
+				chart.setOption({
+					dataset: {source: response},
+					series: [
+						{
+							name: "人数",
+							encode: {x: 'xData', y: 'count'},
+						}
+					]
+				});
+			}).fail(function (error) {
+				console.log(error)
 			});
+		}
+		function initResidentCheckInNumberChart() {
+			let chart = echarts.init($("#ResidentCheckInNumberChart")[0], "theme");
+			chart.setOption(ResidentCheckInNumberChartOption);
+			getResidentCheckInNumberChartData(chart);
+			okUtils.echartsResize([chart]);
+		}
+
+		initResidentCheckInNumberChart();
+
+
+			})
 </script>
 </html>
 

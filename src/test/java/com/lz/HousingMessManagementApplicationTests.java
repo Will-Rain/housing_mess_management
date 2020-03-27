@@ -64,6 +64,7 @@ class HousingMessManagementApplicationTests {
 
     @Test
     void test4() {
+        houseService.ResidentCheckInNumberChart();
     }
 
 

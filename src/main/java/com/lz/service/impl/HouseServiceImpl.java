@@ -6,8 +6,7 @@ import com.lz.service.HouseService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * (House)表服务实现类
@@ -116,6 +115,59 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public String getHouseCount() {
         return this.houseDao.getHouseCount();
+    }
+
+    @Override
+    public List<Map<String, Object>> ResidentCheckInNumberChart() {
+        List<Map<String, Object>> list =  houseDao.ResidentCheckInNumberChart();
+
+        List<Integer> yearList = new ArrayList<Integer>();//存储年份
+
+        //把key为0的map剔除掉
+        Map<String, Object> zeroMap = new HashMap<String, Object>();
+        int index = 0;
+        for (Map<String, Object> map : list) {
+            if(map.get("xData").toString().equals("0")){
+//                System.out.println("==0==");
+                zeroMap = map;
+            }
+            // Integer属于不可更改类型，而且Long和Integer没有任何继承关系，所以不能强转
+            // 使用下面这种方法，注：java.lang.Number是Integer,Long的父类.
+            Number number = (Number) map.get("xData");
+            map.put("xData",number.toString()); // 转化为 string,后面排序用到
+
+            yearList.add(number.intValue());
+        }
+        list.remove(zeroMap);
+        yearList.remove(new Integer(0));
+
+
+        Calendar cal = Calendar.getInstance();
+        int currentYear = cal.get(Calendar.YEAR);
+
+                    //  Collections.min(yearList) 获得list的最小值
+        for(int i = Collections.min(yearList); i <= currentYear; i++){
+            if(!yearList.contains(i)){
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("xData",i);
+                map.put("count",0);
+                list.add(map);
+            }
+        }
+
+        // list(map) 排序
+        list.sort(new Comparator<Map<String, Object>>() {
+            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+                int map1value = Integer.parseInt(o1.get("xData")+"");
+                int map2value = Integer.parseInt( o2.get("xData")+"");
+                return map1value - map2value;
+            }
+        });
+
+
+        System.out.println(list);
+
+        return list;
     }
 
 

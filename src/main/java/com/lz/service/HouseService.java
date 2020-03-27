@@ -71,4 +71,7 @@ public interface HouseService {
 
     //获取住房数量
     String getHouseCount();
+
+    //近十年居民数量变化图
+    List<Map<String,Object>> ResidentCheckInNumberChart();
 }
