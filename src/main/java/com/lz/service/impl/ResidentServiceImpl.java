@@ -8,6 +8,7 @@ import com.lz.service.ResidentService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -104,6 +105,20 @@ public class ResidentServiceImpl implements ResidentService {
     @Override
     public boolean deleteById(Integer id) {
         House house = houseDao.queryById(residentDao.queryById(id).getHouse().getId());
+
+        //删除照片
+        String photo = residentDao.queryById(id).getPhoto();
+        String path = "E://IDEAcodes/residentPhoto/" + photo; //真实路径
+//        String path = "/home/lz/IDEAcodes/residentPhoto/" + photo; //真实路径
+        File file = new File(path);
+        // 路径为文件且不为空则进行删除
+        if (file.isFile() && file.exists()) {
+            System.out.println("执行了删除");
+             if(!file.delete())
+                 return false;
+        }
+
+
         house.setHousePeopleCount(house.getHousePeopleCount() - 1);
         if (this.residentDao.deleteById(id) > 0 && houseDao.update(house) > 0) {
 

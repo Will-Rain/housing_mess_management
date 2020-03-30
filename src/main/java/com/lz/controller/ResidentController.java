@@ -72,7 +72,7 @@ public class ResidentController {
 
         //上传路径保存设置
         String path = "E://IDEAcodes/residentPhoto/"; //真实路径
-//        String path = "/usr/IDEAcodes/residentPhoto/"; //真实路径
+//        String path = "/home/lz/IDEAcodes/residentPhoto/"; //真实路径
 
         if (file != null) {
             String fileName = file.getOriginalFilename();
