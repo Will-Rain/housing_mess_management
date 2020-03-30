@@ -113,7 +113,7 @@ public class ResidentServiceImpl implements ResidentService {
         File file = new File(path);
         // 路径为文件且不为空则进行删除
         if (file.isFile() && file.exists()) {
-            System.out.println("执行了删除");
+//            System.out.println("执行了删除");
              if(!file.delete())
                  return false;
         }

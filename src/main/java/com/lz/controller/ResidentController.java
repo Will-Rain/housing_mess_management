@@ -66,7 +66,7 @@ public class ResidentController {
 //先提交form表单，当数据库add成功后，调用click，异步上传图片
 //图片名称由身份证号来查找
     @RequestMapping("/upload")
-    public String fileUpload2(MultipartFile file, String identityCard) throws IOException {
+    public String fileUpload(MultipartFile file, String identityCard) throws IOException {
 //        System.out.println("identityCard = " + identityCard);
 //        System.out.println("file = " + file);
 

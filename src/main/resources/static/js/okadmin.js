@@ -10,9 +10,12 @@ layui.use(["element", "layer", "okUtils", "okTab", "okLayer", "okContextMenu", "
 
 	var role = $(".role").text(); // 获取用户的角色
 
+	// navs_0.json：普通管理员
+	// navs_1.json：超级管理员
+
 	var okTab = layui.okTab({
 		// 菜单请求路径
-		url: role == 0 ? "data/navs1.json" : "data/navs.json",
+		url: role == 0 ? "data/navs_0.json" : "data/navs_1.json",
 		// 允许同时选项卡的个数
 		openTabNum: 30,
 		// 如果返回的结果和navs.json中的数据结构一致可省略这个方法
