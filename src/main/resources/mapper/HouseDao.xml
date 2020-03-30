@@ -23,7 +23,7 @@
         select
           id, house_number, house_type, house_area, house_people_count, house_risk_level, house_use_status, room_count,
           sale_info, check_in_time, unit_id
-        from housing_info_management.house
+        from house
         where id = #{id}
     </select>
 
@@ -32,7 +32,7 @@
         select
         house.id, house_number, house_type, house_area, house_people_count, house_risk_level, house_use_status, room_count,
         sale_info, check_in_time, unit_id
-        from housing_info_management.house,building,unit
+        from house,building,unit
         <where>
             house.unit_id = unit.id and unit.building_id = building.id
             <if test="buildingId != null and buildingId != '' ">
@@ -50,7 +50,7 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into housing_info_management.house(id, house_number, house_type, house_area, house_people_count,
+        insert into house(id, house_number, house_type, house_area, house_people_count,
          house_risk_level, house_use_status, room_count, sale_info, check_in_time, unit_id)
         values (#{id}, #{houseNumber}, #{houseType}, #{houseArea}, #{housePeopleCount}, #{houseRiskLevel},
          #{houseUseStatus}, #{roomCount}, #{saleInfo}, #{checkInTime}, #{unit.id})
@@ -58,7 +58,7 @@
 
     <!--通过主键修改数据-->
     <update id="update">
-        update housing_info_management.house
+        update house
         <set>
             <if test="houseNumber != null">
                 house_number = #{houseNumber},
@@ -96,7 +96,7 @@
 
     <!--通过主键删除-->
     <delete id="deleteById">
-        delete from housing_info_management.house where id = #{id}
+        delete from house where id = #{id}
     </delete>
 
 
@@ -199,7 +199,7 @@
         select
         house.id, house_number, house_type, house_area, house_people_count, house_risk_level,
                house_use_status, room_count, sale_info, check_in_time, unit_id
-        from housing_info_management.house,building,unit
+        from house,building,unit
         <where>
             house.unit_id = unit.id and unit.building_id = building.id
             and sale_info = 0

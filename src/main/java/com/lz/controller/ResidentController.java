@@ -63,7 +63,7 @@ public class ResidentController {
     }
 
 
-    //先提交form表单，当数据库add成功后，调用click，异步上传图片
+//先提交form表单，当数据库add成功后，调用click，异步上传图片
 //图片名称由身份证号来查找
     @RequestMapping("/upload")
     public String fileUpload2(MultipartFile file, String identityCard) throws IOException {
@@ -72,6 +72,8 @@ public class ResidentController {
 
         //上传路径保存设置
         String path = "E://IDEAcodes/residentPhoto/"; //真实路径
+//        String path = "/usr/IDEAcodes/residentPhoto/"; //真实路径
+
         if (file != null) {
             String fileName = file.getOriginalFilename();
             String suffix = "";

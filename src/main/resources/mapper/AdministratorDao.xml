@@ -12,7 +12,7 @@
     <select id="queryByName" resultMap="AdministratorMap">
         select
           name, password, role
-        from housing_info_management.administrator
+        from administrator
         where name = #{name}
     </select>
 
@@ -20,7 +20,7 @@
     <select id="queryAllByLimit" resultMap="AdministratorMap">
         select
           name, password, role
-        from housing_info_management.administrator
+        from administrator
         limit #{offset}, #{limit}
     </select>
 
@@ -28,7 +28,7 @@
     <select id="queryAll" resultMap="AdministratorMap">
         select
           name, password, role
-        from housing_info_management.administrator
+        from administrator
         <where>
             <if test="administrator.name != null and administrator.name != ''">
                 and name = #{administrator.name}
@@ -47,13 +47,13 @@
 
     <!--新增所有列-->
     <insert id="insert">
-        insert into housing_info_management.administrator(name, password, role)
+        insert into administrator(name, password, role)
         values (#{name},#{password}, #{role})
     </insert>
 
     <!--通过主键修改数据-->
     <update id="update">
-        update housing_info_management.administrator
+        update administrator
         <set>
             <if test="password != null and password != ''">
                 password = #{password},
@@ -67,7 +67,7 @@
 
     <!--通过主键删除-->
     <delete id="deleteByName">
-        delete from housing_info_management.administrator where name = #{name}
+        delete from administrator where name = #{name}
     </delete>
 
 

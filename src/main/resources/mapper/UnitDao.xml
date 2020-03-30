@@ -25,13 +25,13 @@
 <!--          unit.id as id, unit_number, layer_count, house_count, elevator_count,-->
 <!--          building.id as building_id,building_number, construction_time,-->
 <!--          property_management_company, building_principal, unit_count-->
-<!--        from housing_info_management.unit,housing_info_management.building-->
+<!--        from unit,building-->
 <!--        where unit.id = #{id} and building.id = unit.building_id-->
 <!--    </select>-->
     <select id="queryById" resultMap="UnitMap">
         select
           id, unit_number, layer_count, house_count, elevator_count,building_id
-        from housing_info_management.unit
+        from unit
         where unit.id = #{id}
     </select>
 
@@ -46,7 +46,7 @@
     <select id="queryAllByLimit" resultMap="UnitMap">
         select
           *
-        from housing_info_management.unit
+        from unit
         <where>
             <if test="buildingId != null and buildingId != '' ">
                 and building_id = #{buildingId}
@@ -60,13 +60,13 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into housing_info_management.unit(id,unit_number, layer_count, house_count, elevator_count, building_id)
+        insert into unit(id,unit_number, layer_count, house_count, elevator_count, building_id)
         values (#{id},#{unitNumber}, #{layerCount}, #{houseCount}, #{elevatorCount}, #{building.id})
     </insert>
 
     <!--通过主键修改数据-->
     <update id="update" parameterType="com.lz.entity.Unit">
-        update housing_info_management.unit
+        update unit
         <set>
             <if test="unitNumber != null">
                 unit_number = #{unitNumber},
@@ -89,7 +89,7 @@
 
     <!--通过主键删除-->
     <delete id="deleteById">
-        delete from housing_info_management.unit where id = #{id}
+        delete from unit where id = #{id}
     </delete>
 
 
@@ -102,7 +102,7 @@
     <select id="selectDistinctUnitNumber" resultType="java.lang.Integer">
         select
         distinct unit_number
-        from housing_info_management.unit
+        from unit
         <where>
             <if test="buildingId != null and buildingId != ''">
                 and  building_id = #{buildingId}

@@ -165,7 +165,7 @@ public class HouseServiceImpl implements HouseService {
         });
 
 
-        System.out.println(list);
+//        System.out.println(list);
 
         return list;
     }

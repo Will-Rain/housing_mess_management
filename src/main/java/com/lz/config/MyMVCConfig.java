@@ -82,7 +82,7 @@ public class MyMVCConfig implements WebMvcConfigurer {
                     addResourceLocations("file:E:/IDEAcodes/residentPhoto/");
         }else{//linux和mac系统
             registry.addResourceHandler("/residentPhoto/**").
-                    addResourceLocations("file:/IDEAcodes/residentPhoto/");
+                    addResourceLocations("file:/usr/IDEAcodes/residentPhoto/");
         }
     }
 
