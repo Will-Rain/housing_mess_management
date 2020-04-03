@@ -122,6 +122,11 @@ public class ResidentController {
             msg = 3; //此房屋已存在户主
             return msg;
         }
+        if(resident.getIsHeadOfHousehold() ==0 &&
+                residentService.queryHeadOfHousehold("", "", resident.getHouse().getId()).size() == 0) {
+            msg = 4; //请先指定户主
+            return msg;
+        }
         if (residentService.insert(resident) != null) {
             msg = 1; //插入成功
         }
@@ -132,7 +137,7 @@ public class ResidentController {
 
     @RequestMapping("/updateResident")
     public int updateResident(@RequestBody Resident resident) {
-        System.out.println(resident.getBirthday());
+        System.out.println(resident);
         int msg = 0; //修改失败
         if (residentService.update(resident) != null) {
             msg = 1; //修改成功

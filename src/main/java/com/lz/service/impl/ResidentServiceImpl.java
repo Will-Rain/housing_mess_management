@@ -67,8 +67,6 @@ public class ResidentServiceImpl implements ResidentService {
      */
     @Override
     public Resident insert(Resident resident) { //house表中人数需要改变
-        if (resident.getParty().equals("") || resident.getParty() == null)
-            resident.setParty("无");
 
         this.residentDao.insert(resident);
 

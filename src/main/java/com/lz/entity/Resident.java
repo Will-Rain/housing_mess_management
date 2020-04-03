@@ -57,7 +57,7 @@ public class Resident implements Serializable {
     /**
     * 所属党派
     */
-    private String party;
+    private Party party;
     /**
     * 居民照片
     */

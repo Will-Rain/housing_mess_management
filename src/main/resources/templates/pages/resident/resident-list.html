@@ -120,9 +120,8 @@
 				{field: "identityCard", title: "身份证号", align:'center', width:160},
 				{field: "censusRegister", title: "户籍", align:'center', width:110},
 				{field: "educationalLevel", title: "教育程度", width:80,},
-				{field: "party", title: "所属党派", width:100, templet: function (data) {
-						if(data.party==null || data.party=="") return "无";
-						else return data.party;}},
+				{field: "party", title: "所属党派", width:100,
+					templet: "<div>{{d.party.party}}</div>"},
 				{field: "isHeadOfHousehold", title: "是否是户主", width:100,templet: function (data) {
 						if(data.isHeadOfHousehold == 0) return "否";
 						else return "是";}},

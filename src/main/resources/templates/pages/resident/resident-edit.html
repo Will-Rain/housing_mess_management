@@ -12,27 +12,39 @@
 	<!--form表单-->
 	<form class="layui-form ok-form" lay-filter="filter">
 
-		<input type="hidden" name="residentId" class="layui-input">
-		<input type="hidden" name="buildingId" class="layui-input">
-		<input type="hidden" name="unitId" class="layui-input">
-		<input type="hidden" name="houseId" class="layui-input">
+		<input type="hidden" id="residentId" name="residentId" class="layui-input">
+		<input type="hidden" id="buildingId" name="buildingId" class="layui-input">
+		<input type="hidden" id="unitId" name="unitId" class="layui-input">
+		<input type="hidden" id="houseId" name="houseId" class="layui-input">
 
 		<div class="layui-form-item" lay-filter="buildingNumber">
 			<label class="layui-form-label">楼宇号</label>
 			<div class="layui-input-block">
-				<input type="text" name="buildingNumber" readonly unselectable="on" placeholder="请输入单元号" autocomplete="off" class="layui-input" lay-verify="required">
+<!--				<input type="text" name="buildingNumber" readonly unselectable="on" placeholder="请输入单元号" autocomplete="off" class="layui-input" lay-verify="required">-->
+				<select id="buildingNumber" name="buildingNumber" lay-filter="buildingNumber"
+						lay-search lay-verify="required">
+				</select>
 			</div>
+
 		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label">单元号</label>
 			<div class="layui-input-block">
-				<input type="text" name="unitNumber" readonly unselectable="on" placeholder="请输入单元号" autocomplete="off" class="layui-input" lay-verify="required">
+<!--				<input type="text" name="unitNumber" readonly unselectable="on" placeholder="请输入单元号" -->
+<!--					   autocomplete="off" class="layui-input" lay-verify="required">-->
+				<select id="unitNumber" name="unitNumber" lay-filter="unitNumber"
+						lay-search lay-verify="required">
+				</select>
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label">房屋号</label>
 			<div class="layui-input-block">
-				<input type="text" name="houseNumber" readonly unselectable="on" placeholder="请输入房屋号" autocomplete="off" class="layui-input" lay-verify="required">
+<!--				<input type="text" name="houseNumber" readonly unselectable="on" placeholder="请输入房屋号" -->
+<!--					   autocomplete="off" class="layui-input" lay-verify="required">-->
+				<select id="houseNumber" name="houseNumber" lay-filter="houseNumber"
+						lay-search lay-verify="required">
+				</select>
 			</div>
 		</div>
 
@@ -121,21 +133,6 @@
 			<label class="layui-form-label">所属党派</label>
 			<div class="layui-input-block">
 				<select id="party" name="party" lay-filter="party" lay-search lay-verify="required">
-					<option value="无" selected>无</option>
-					<option value="中国共产党">中国共产党</option>
-					<option value="中国国民党革命委员会">中国国民党革命委员会</option>
-					<option value="民主同盟">民主同盟</option>
-					<option value="民主建国会">民主建国会</option>
-					<option value="民主促进会">民主促进会</option>
-					<option value="农工民主党">农工民主党</option>
-					<option value="致公党">致公党</option>
-					<option value="九三学社">九三学社</option>
-					<option value="台湾民主自治同盟">台湾民主自治同盟</option>
-					<option value="中国国民党">中国国民党</option>
-					<option value="中国青年党">中国青年党</option>
-					<option value="中国民主社会党">中国民主社会党</option>
-					<option value="工党">工党</option>
-					<option value="中国民主党">中国民主党</option>
 				</select>
 			</div>
 		</div>
@@ -194,7 +191,7 @@
 			identityCard: data.identityCard,
 			censusRegister: data.censusRegister,
 			educationalLevel: data.educationalLevel,
-			party: data.party,
+			party: data.party.party,
 			isHeadOfHousehold: data.isHeadOfHousehold,
 		};
 
@@ -217,6 +214,16 @@
 
 		initForm(parent.editData);
 		form.val("filter",initData);
+		// 下拉框赋初值
+		$("select[id='buildingNumber']").append("<option value="+ parent.editData.house.unit.building.buildingNumber +">"
+				+ parent.editData.house.unit.building.buildingNumber +"号楼</option>");
+		$("select[id='unitNumber']").append("<option value="+ parent.editData.house.unit.unitNumber +">"
+				+ parent.editData.house.unit.unitNumber +"单元</option>");
+		$("select[id='houseNumber']").append("<option value="+ parent.editData.house.houseNumber +">"
+				+ parent.editData.house.houseNumber +"室</option>");
+		$("select[id='party']").append("<option value="+ parent.editData.party.id +">"
+				+ parent.editData.party.party +"</option>");
+
 		form.render();
 
 
@@ -230,6 +237,174 @@
 
 		//旧头像
 		layui.$('#show').find('img').attr('src', '/residentPhoto/' + initData.photo);
+
+
+
+		var buildingNumber = parent.editData.house.unit.building.buildingNumber,
+				unitNumber = parent.editData.house.unit.unitNumber,
+				houseNumber = parent.editData.house.houseNumber;
+
+		function getBuildingNumber(){
+			//获取下拉框buildingNumber
+			okUtils.ajax("/building/selectDistinctNumber", "get",
+					{}, false).done(function (response) {
+				// console.log(response);
+				let select = $("select[id='buildingNumber']");
+
+				$.each(response, function (i, item) {
+					if(parent.editData.house.unit.building.buildingNumber !== item) //防止重复
+						select.append("<option value="+ item+">"+ item+"号楼</option>");
+
+				});
+
+				form.render('select');
+			}).fail(function (error) {
+				console.log(error)
+			});
+		}
+		function getUnitNumber() {
+				//填充unitNumber下拉框
+			okUtils.ajax("/unit/selectDistinctUnitNumber", "get",
+					{buildingId: parent.editData.house.unit.building.id}, false).done(function (response) {
+				let select = $("select[id='unitNumber']");
+
+				$.each(response, function (i, item) {
+					if(parent.editData.house.unit.unitNumber !== item)
+						select.append("<option value="+ item+">"+ item+"单元</option>");
+				});
+				form.render('select');
+			}).fail(function (error) {
+				console.log(error)
+			});
+		}
+		function getHouseNumber() {
+				//填充houseNumber下拉框
+			okUtils.ajax("/house/selectDistinctHouseNumber", "get",
+					{unitId: parent.editData.house.unit.id}, false).done(function (response) {
+				// console.log(response);
+				let select = $("select[id='houseNumber']");
+
+				$.each(response, function (i, item) {
+					if(parent.editData.house.houseNumber !== item)
+						select.append("<option value="+ item+">"+ item+"室</option>");
+				});
+				form.render('select');
+			}).fail(function (error) {
+				console.log(error)
+			});
+		}
+		function getParty(){  // 获取party
+			okUtils.ajax("/party/selectDistinctParty", "get",
+					{}, false).done(function (response) {
+				// console.log(response);
+
+				let select = $("select[id='party']");
+
+				$.each(response, function (i, item) {
+					if(parent.editData.party.id !== item.id)
+						select.append("<option value="+ item.id +">"+ item.party+"</option>");
+				});
+				form.render('select');
+			}).fail(function (error) {
+				console.log(error)
+			});
+		}
+
+		// 初始化加载下拉框的值
+		layer.ready(function () {
+			getBuildingNumber();
+			getUnitNumber();
+			getHouseNumber();
+			getParty();
+		});
+
+
+		// 点击下拉框时重新获取其余下拉框的值
+		form.on("select(buildingNumber)", function (data) {
+			buildingNumber = data.value;
+
+			$("select[id='houseNumber']").empty();
+			//填充隐藏域buildingId
+			if(data.value!=='' && data.value!=null){
+				okUtils.ajax("/building/selectDistinctId", "get",
+						{number:data.value}, false).done(function (response) {
+					$("#buildingId").val(response);
+
+					//填充unitNumber下拉框
+					okUtils.ajax("/unit/selectDistinctUnitNumber", "get",
+							{buildingId: response}, false).done(function (response) {
+						// console.log(response.length);
+
+						let select = $("select[id='unitNumber']");
+						select.empty();
+						$.each(response, function (i, item) {
+							select.append("<option value="+ item+">"+ item+"单元</option>");
+						});
+						form.render('select');
+					}).fail(function (error) {
+						console.log(error)
+					});
+
+					form.render();
+
+				}).fail(function (error) {
+					console.log(error)
+				});
+			}
+
+		});
+
+		form.on("select(unitNumber)", function (data) {
+			unitNumber = data.value;
+
+			//填充unitId隐藏域
+			if (data.value !== '' && data.value != null) {
+				okUtils.ajax("/unit/selectDistinctUnitId", "get",
+						{buildingNumber:buildingNumber, unitNumber: data.value}, false).done(function (response) {
+					$("#unitId").val(response);
+					// console.log("response = " + response);
+
+					//填充houseNumber下拉框
+					okUtils.ajax("/house/selectDistinctHouseNumber", "get",
+							{unitId: response}, false).done(function (response) {
+						// console.log(response);
+						let select = $("select[id='houseNumber']");
+						select.empty();
+						select.html("");
+						$.each(response, function (i, item) {
+							select.append("<option value="+ item+">"+ item+"室</option>");
+						});
+						form.render('select');
+					}).fail(function (error) {
+						console.log(error)
+					});
+
+					form.render();
+				}).fail(function (error) {
+					console.log(error)
+				});
+			}
+		});
+
+		form.on("select(houseNumber)", function (data) {
+			houseNumber = data.value;
+
+			//填充unitId隐藏域
+			if (data.value !== '' && data.value != null) {
+				okUtils.ajax("/house/selectDistinctHouseId", "get",
+						{buildingNumber:buildingNumber, unitNumber: unitNumber, houseNumber: data.value}, false).done(function (response) {
+					$("#houseId").val(response);
+
+					form.render();
+				}).fail(function (error) {
+					console.log(error)
+				});
+			}
+		});
+
+
+
+
 
 		//图片上传
 		upload.render({
@@ -262,6 +437,7 @@
 
 
 		form.on("submit(edit)", function (data) {
+			// console.log("data.field.houseId = "+$("#houseId").val());
 			let resident = {
 				id: data.field.residentId,
 				name: data.field.name,
@@ -271,7 +447,9 @@
 				identityCard: data.field.identityCard,
 				censusRegister: data.field.censusRegister,
 				educationalLevel: data.field.educationalLevel,
-				party: data.field.party,
+				party: {
+					id: data.field.party
+				},
 				isHeadOfHousehold: data.field.isHeadOfHousehold,
 				house: {
 					id: data.field.houseId,
@@ -316,8 +494,6 @@
 					console.log("error");
 				}
 			});
-
-
 
 			return false;
 		});

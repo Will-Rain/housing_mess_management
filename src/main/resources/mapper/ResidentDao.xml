@@ -11,9 +11,13 @@
         <result property="identityCard" column="identity_card" jdbcType="VARCHAR"/>
         <result property="censusRegister" column="census_register" jdbcType="VARCHAR"/>
         <result property="educationalLevel" column="educational_level" jdbcType="VARCHAR"/>
-        <result property="party" column="party" jdbcType="VARCHAR"/>
         <result property="photo" column="photo" jdbcType="VARCHAR"/>
         <result property="isHeadOfHousehold" column="is_head_of_household" jdbcType="INTEGER"/>
+
+        <association property="party" column="party_id" javaType="com.lz.entity.Party"
+                     select="com.lz.dao.PartyDao.queryById">
+        </association>
+
         <association property="house" column="house_id" javaType="com.lz.entity.House"
                      select="com.lz.dao.HouseDao.queryById">
         </association>
@@ -23,15 +27,15 @@
     <select id="queryById" resultMap="ResidentMap">
         select
           id, name, gender, birthday, telephone_number, identity_card, census_register, educational_level,
-          party, photo, is_head_of_household, house_id
-        from resident
+          party_id, photo, is_head_of_household, house_id
+        from housing_info_management.resident
         where id = #{id}
     </select>
 
 <!--    通过身份证号查找-->
     <select id="queryByIdentityCard" resultMap="ResidentMap">
         select *
-        from resident
+        from housing_info_management.resident
         where identity_card = #{identityCard}
     </select>
 
@@ -40,8 +44,9 @@
     <select id="queryAllByLimit" resultMap="ResidentMap">
         select
           resident.id, name, gender, birthday, telephone_number, identity_card, census_register,
-          educational_level, party, photo, is_head_of_household, house_id
-        from resident,building,unit,house
+          educational_level, party_id, photo, is_head_of_household, house_id
+        from housing_info_management.resident,housing_info_management.building,
+        housing_info_management.unit,housing_info_management.house
         <where>
             building.id = unit.building_id and unit.id = house.unit_id
             and house.id = resident.house_id
@@ -63,7 +68,7 @@
 <!--    按姓名查找-->
     <select id="searchByName" resultMap="ResidentMap">
         select *
-        from resident
+        from housing_info_management.resident
         <where>
             <if test="name != null and name != '' ">
                 and name like #{name}
@@ -77,15 +82,15 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into resident(name, gender, birthday, telephone_number, identity_card,
-         census_register, educational_level, party, photo, is_head_of_household, house_id)
+        insert into housing_info_management.resident(name, gender, birthday, telephone_number, identity_card,
+         census_register, educational_level, party_id, photo, is_head_of_household, house_id)
         values (#{name}, #{gender}, #{birthday}, #{telephoneNumber}, #{identityCard}, #{censusRegister},
-        #{educationalLevel}, #{party}, #{photo}, #{isHeadOfHousehold}, #{house.id})
+        #{educationalLevel}, #{party.id}, #{photo}, #{isHeadOfHousehold}, #{house.id})
     </insert>
 
     <!--通过主键修改数据-->
     <update id="update">
-        update resident
+        update housing_info_management.resident
         <set>
             <if test="name != null and name != ''">
                 name = #{name},
@@ -108,8 +113,8 @@
             <if test="educationalLevel != null and educationalLevel != ''">
                 educational_level = #{educationalLevel},
             </if>
-            <if test="party != null and party != ''">
-                party = #{party},
+            <if test="party.id != null and party.id != ''">
+                party_id = #{party.id},
             </if>
             <if test="photo != null and photo != ''">
                 photo = #{photo},
@@ -126,15 +131,16 @@
 
     <!--通过主键删除-->
     <delete id="deleteById">
-        delete from resident where id = #{id}
+        delete from housing_info_management.resident where id = #{id}
     </delete>
 
 <!--   查询户主信息-->
     <select id="queryHeadOfHousehold" resultMap="ResidentMap">
         select
         resident.id, name, gender, birthday, telephone_number, identity_card, census_register,
-        educational_level, party, photo, is_head_of_household, house_id
-        from resident,building,unit,house
+        educational_level, party_id, photo, is_head_of_household, house_id
+        from housing_info_management.resident,housing_info_management.building,
+        housing_info_management.unit,housing_info_management.house
         <where>
             building.id = unit.building_id and unit.id = house.unit_id
             and house.id = resident.house_id
@@ -172,7 +178,8 @@
         from
         (
         select(YEAR(curdate()) - YEAR(birthday)) as age
-        from resident,building,unit,house
+        from housing_info_management.resident,housing_info_management.building,housing_info_management.unit,
+             housing_info_management.house
         <where>
             building.id = unit.building_id
             and unit.id = house.unit_id
@@ -192,7 +199,8 @@
 <!--    按性别统计-->
     <select id="statisticalGender" resultType="java.util.Map">
         select gender as xData, count(resident.id) as count
-        from resident,building,unit,house
+        from housing_info_management.resident,housing_info_management.building,
+        housing_info_management.unit,housing_info_management.house
         <where>
             building.id = unit.building_id
             and unit.id = house.unit_id
@@ -250,7 +258,8 @@
             end
         ) as name,
           count(resident.id) as value
-        from resident,building,unit,house
+        from housing_info_management.resident,housing_info_management.building,
+        housing_info_management.unit,housing_info_management.house
         <where>
             building.id = unit.building_id
             and unit.id = house.unit_id
@@ -270,7 +279,8 @@
 <!--    按学历统计-->
     <select id="statisticalEducational" resultType="java.util.Map">
         select educational_level as xData, count(resident.id) as count
-        from resident,building,unit,house
+        from housing_info_management.resident,housing_info_management.building,
+        housing_info_management.unit,housing_info_management.house
         <where>
             building.id = unit.building_id
             and unit.id = house.unit_id
@@ -286,8 +296,9 @@
     </select>
 <!--    按所属党派统计-->
     <select id="statisticalParty" resultType="java.util.Map">
-        select party as xData, count(resident.id) as count
-        from resident,building,unit,house
+        select party_id as xData, count(resident.id) as count
+        from housing_info_management.resident,housing_info_management.building,
+        housing_info_management.unit,housing_info_management.house
         <where>
             building.id = unit.building_id
             and unit.id = house.unit_id
@@ -305,7 +316,8 @@
 <!--    人数统计-->
     <select id="statisticalPeopleCount" resultType="java.util.Map">
         select building_number as xData, count(*) as count
-        from resident,building,unit,house
+        from housing_info_management.resident,housing_info_management.building,
+             housing_info_management.unit,housing_info_management.house
         where
             building.id = unit.building_id
             and unit.id = house.unit_id
@@ -314,7 +326,7 @@
     </select>
 <!--    获取居民数量-->
     <select id="getResidentCount" resultType="java.lang.String">
-        select count(*) from resident;
+        select count(*) from housing_info_management.resident;
     </select>
 
 

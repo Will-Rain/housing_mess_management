@@ -131,23 +131,7 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">所属党派</label>
 			<div class="layui-input-block">
-				<select id="party" name="party" lay-filter="party" lay-search lay-verify="required">
-					<option value="无" selected>无</option>
-					<option value="中国共产党">中国共产党</option>
-					<option value="中国国民党革命委员会">中国国民党革命委员会</option>
-					<option value="民主同盟">民主同盟</option>
-					<option value="民主建国会">民主建国会</option>
-					<option value="民主促进会">民主促进会</option>
-					<option value="农工民主党">农工民主党</option>
-					<option value="致公党">致公党</option>
-					<option value="九三学社">九三学社</option>
-					<option value="台湾民主自治同盟">台湾民主自治同盟</option>
-					<option value="中国国民党">中国国民党</option>
-					<option value="中国青年党">中国青年党</option>
-					<option value="中国民主社会党">中国民主社会党</option>
-					<option value="工党">工党</option>
-					<option value="中国民主党">中国民主党</option>
-				</select>
+				<select id="party" name="party" lay-filter="party" lay-search lay-verify="required"></select>
 			</div>
 		</div>
 		<div class="layui-form-item">
@@ -248,9 +232,24 @@
 				console.log(error)
 			});
 		}
+		function getParty(){ //获取 party
+			okUtils.ajax("/party/selectDistinctParty", "get",
+					{}, false).done(function (response) {
+				console.log(response);
 
+				let select = $("select[id='party']");
+				select.append("<option value=''>请选择党派</option>");
+				$.each(response, function (i, item) {
+					select.append("<option value="+ item.id +">"+ item.party+"</option>");
+				});
+				form.render('select');
+			}).fail(function (error) {
+				console.log(error)
+			});
+		}
 		layer.ready(function () {
 			getSelectData();
+			getParty();
 		});
 
 		var buildingNumber,unitNumber,houseNumber;
@@ -356,7 +355,9 @@
 				identityCard: data.field.identityCard,
 				censusRegister: censusRegister,
 				educationalLevel: data.field.educationalLevel,
-				party: data.field.party,
+				party: {
+					id: data.field.party
+				},
 				isHeadOfHousehold: data.field.isHeadOfHousehold,
 				house: {
 					id: data.field.houseId,
@@ -401,6 +402,11 @@
 					}
 					else if(response === 3){
 						okLayer.yellowSighMsg("此房屋已存在户主，请检查您所填写的字段",function () {
+							parent.layer.close(parent.layer.getFrameIndex(window.name));
+						});
+					}
+					else if(response === 4){
+						okLayer.yellowSighMsg("此房屋尚未指定户主，请先添加户主信息",function () {
 							parent.layer.close(parent.layer.getFrameIndex(window.name));
 						});
 					}
