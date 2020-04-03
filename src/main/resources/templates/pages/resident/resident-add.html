@@ -131,7 +131,23 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">所属党派</label>
 			<div class="layui-input-block">
-				<input type="text" name="party" value="无" placeholder="请输入所属党派" autocomplete="off" class="layui-input">
+				<select id="party" name="party" lay-filter="party" lay-search lay-verify="required">
+					<option value="无" selected>无</option>
+					<option value="中国共产党">中国共产党</option>
+					<option value="中国国民党革命委员会">中国国民党革命委员会</option>
+					<option value="民主同盟">民主同盟</option>
+					<option value="民主建国会">民主建国会</option>
+					<option value="民主促进会">民主促进会</option>
+					<option value="农工民主党">农工民主党</option>
+					<option value="致公党">致公党</option>
+					<option value="九三学社">九三学社</option>
+					<option value="台湾民主自治同盟">台湾民主自治同盟</option>
+					<option value="中国国民党">中国国民党</option>
+					<option value="中国青年党">中国青年党</option>
+					<option value="中国民主社会党">中国民主社会党</option>
+					<option value="工党">工党</option>
+					<option value="中国民主党">中国民主党</option>
+				</select>
 			</div>
 		</div>
 		<div class="layui-form-item">
