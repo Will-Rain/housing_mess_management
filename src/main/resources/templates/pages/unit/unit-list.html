@@ -59,8 +59,9 @@
 				{type: "checkbox", fixed: "left"},
 				//这里没有写 unit的 id 列，则它就是隐藏域
 				{field: "building.buildingNumber", title: "楼宇号",width: 150,sort: true, fixed:true,
-					templet: "<div>{{d.building.buildingNumber}}</div>"},
-				{field: "unitNumber", title: "单元号", width: 175},
+					templet: "<div>{{d.building.buildingNumber}} 号楼</div>"},
+				{field: "unitNumber", title: "单元号", width: 175,
+					templet: "<div>{{d.unitNumber}} 单元</div>"},
 				{field: "layerCount", title: "层数（层）",width: 175},
 				{field: "houseCount", title: "每层户数（户）",width: 175,totalRow:true},
 				{field: "elevatorCount", title: "电梯数量（台）",width: 175,totalRow:true},
@@ -140,7 +141,7 @@
 
 		function edit(data) {
 			editData = data;
-			okLayer.open("更新单元信息", "unit-edit.html", "50%", "80%", function (layero) {
+			okLayer.open("更新单元信息", "unit-edit.html", "30%", "80%", function (layero) {
 				// var iframeWin = window[layero.find("iframe")[0]["name"]];
 				// iframeWin.initForm(data);
 			}, function () {

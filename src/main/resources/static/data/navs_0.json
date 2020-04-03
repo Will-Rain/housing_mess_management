@@ -64,6 +64,27 @@
         "spread": false
       }
     ]
+  },
+  {
+    "title": "图形展示",
+    "href": "",
+    "icon": "&#xe629;",
+    "spread": false,
+    "children": [
+      {
+        "title": "住房信息图形化",
+        "href": "pages/chart/chart-house.html",
+        "fontFamily": "layui-icon",
+        "icon": "&#xe62c;",
+        "spread": false
+      },
+      {
+        "title": "居民信息图形化",
+        "href": "pages/chart/chart-resident.html",
+        "fontFamily": "layui-icon",
+        "icon": "&#xe62c;",
+        "spread": false
+      }
+    ]
   }
-
 ]
