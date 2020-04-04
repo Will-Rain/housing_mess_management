@@ -296,13 +296,15 @@
     </select>
 <!--    按所属党派统计-->
     <select id="statisticalParty" resultType="java.util.Map">
-        select party_id as xData, count(resident.id) as count
+        select party.party as xData, count(resident.id) as count
         from housing_info_management.resident,housing_info_management.building,
-        housing_info_management.unit,housing_info_management.house
+        housing_info_management.unit,housing_info_management.house,
+        housing_info_management.party
         <where>
             building.id = unit.building_id
             and unit.id = house.unit_id
             and house.id = resident.house_id
+            and resident.party_id = party.id
             <if test="buildingId != null and buildingId != ''">
                 and building.id = #{buildingId}
             </if>
@@ -324,11 +326,49 @@
             and house.id = resident.house_id
         group by xData
     </select>
+
+<!--    年龄对比统计-->
+    <select id="statisticalAgeCompare" resultType="java.util.Map">
+        select
+        (
+        case
+        when a.age is null then '未知'
+        when a.age between 0 and 10 then '0-10岁'
+        when a.age between 10 and 20 then '10-20岁'
+        when a.age between 20 and 30 then '20-30岁'
+        when a.age between 30 and 40 then '30-40岁'
+        when a.age between 40 and 50 then '40-50岁'
+        when a.age between 50 and 60 then '50-60岁'
+        when a.age >= 60 then '60岁以上'
+        end
+        ) as xData,
+        count(*) as count,
+        a.buildingNumber as buildingNumber
+        from
+        (
+        select(YEAR(curdate()) - YEAR(birthday)) as age, building.building_number as buildingNumber
+        from housing_info_management.resident,housing_info_management.building,housing_info_management.unit,
+        housing_info_management.house
+        <where>
+            building.id = unit.building_id
+            and unit.id = house.unit_id
+            and house.id = resident.house_id
+            <if test="buildingId != null and buildingId != ''">
+                and building.id = #{buildingId}
+            </if>
+            <if test="unitId != null and unitId != ''">
+                and unit.id = #{unitId}
+            </if>
+        </where>
+        ) as a
+        group by xData, buildingNumber
+        order by xData
+    </select>
+
 <!--    获取居民数量-->
     <select id="getResidentCount" resultType="java.lang.String">
         select count(*) from housing_info_management.resident;
     </select>
-
 
 
 

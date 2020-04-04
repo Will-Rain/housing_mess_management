@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>居民数量及性别统计图</title>
+    <link rel="stylesheet" th:href="@{/css/oksub.css}">
+    <script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+</head>
+<body>
+<div class="childrenBody ok-body-scroll">
+    <!--下拉框搜索区域-->
+    <div class="layui-row">
+        <div class="layui-col-md2">
+            <button class="layui-btn layui-btn-normal" id="all" lay-filter="all">
+                查看全部
+            </button>
+        </div>
+        <div class="layui-col-md10">
+            <form class="layui-form" lay-filter="search">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <input type="hidden" id="buildingId" name="buildingId" class="layui-input">
+                        <div class="layui-input-inline">
+                            <select id="buildingNumber" name="buildingNumber" lay-filter="buildingNumber"
+                                    lay-search></select>
+                        </div>
+
+                        <input type="hidden" id="unitId" name="unitId" class="layui-input">
+                        <div class="layui-input-inline">
+                            <select id="unitNumber" name="unitNumber" lay-filter="unitNumber" lay-search></select>
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <button class="layui-btn" lay-submit="search" lay-filter="search">
+                                <i class="layui-icon">&#xe615;</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--    第一行-->
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <div class="ok-card-title">住户数量统计图</div>
+                </div>
+                <div class="ok-card-body map-body">
+                    <div style="height: 300px;" id="peopleCountChart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <div class="ok-card-title">男女比例图</div>
+                </div>
+                <div class="ok-card-body map-body">
+                    <div style="height: 300px;" id="genderChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script th:src="@{/lib/echarts/echarts.min.js}"></script>
+<script type="text/javascript" th:src="@{/lib/echarts/world/js/china.js}"></script>
+<script>
+    layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils"], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let okLayer = layui.okLayer;
+        let okUtils = layui.okUtils;
+        let $ = layui.jquery;
+        okLoading.close($);
+
+        // 填充下拉框
+        function getSelectData() { //获取下拉框的值number
+            okUtils.ajax("/building/selectDistinctNumber", "get",
+                {}, false).done(function (response) {
+                // console.log(response.length);
+                let select = $("select[id='buildingNumber']");
+                $("select[id='unitNumber']").empty();
+                select.html("");
+                select.append("<option value=''>请选择楼宇号</option>");
+                $.each(response, function (i, item) {
+                    select.append("<option value=" + item + ">" + item + "号楼</option>");
+                });
+
+                form.render('select', 'search');
+            }).fail(function (error) {
+                console.log(error)
+            });
+        }
+        layer.ready(function () {
+            getSelectData();
+        });
+
+        var buildingNumber = '', unitNumber = '';
+        form.on("select(buildingNumber)", function (data) {
+            buildingNumber = data.value;
+
+            //填充隐藏域buildingId
+            if (data.value !== '' && data.value != null) {
+                okUtils.ajax("/building/selectDistinctId", "get",
+                    {number: data.value}, false).done(function (response) {
+                    $("#buildingId").val(response);
+
+
+                    //填充unitNumber下拉框
+                    okUtils.ajax("/unit/selectDistinctUnitNumber", "get",
+                        {buildingId: response}, false).done(function (response) {
+                        // console.log(response.length);
+
+                        let select = $("select[id='unitNumber']");
+                        select.empty();
+                        select.html("");
+                        select.append("<option value=''>请选择单元号</option>");
+                        $.each(response, function (i, item) {
+                            select.append("<option value=" + item + ">" + item + "单元</option>");
+                        });
+
+                        form.render('select', 'search');
+                    }).fail(function (error) {
+                        console.log(error)
+                    });
+
+                    form.render();
+
+                }).fail(function (error) {
+                    console.log(error)
+                });
+            }
+
+        });
+
+        form.on("select(unitNumber)", function (data) {
+            unitNumber = data.value;
+
+            if (data.value !== '' && data.value != null) {
+                okUtils.ajax("/unit/selectDistinctUnitId", "get",
+                    {buildingNumber: buildingNumber, unitNumber: data.value}, false).done(function (response) {
+                    $("#unitId").val(response);
+                    console.log("response = " + response);
+                    form.render();
+
+                }).fail(function (error) {
+                    console.log(error)
+                });
+            }
+        });
+
+
+        form.on("submit(search)", function (data) {
+            initGenderChart();
+
+            // 恢复初值
+            getSelectData();
+            $("#buildingId").val("");
+            $("#unitId").val("");
+            buildingNumber = '';
+            unitNumber = '';
+
+            return false;
+        });
+
+        $("#all").on('click', function () {
+            // 恢复初值
+            getSelectData();
+            $("#buildingId").val("");
+            $("#unitId").val("");
+
+            initGenderChart();
+        });
+
+
+
+//    genderChart 饼图
+        var genderChartOption = {
+            legend: {
+                orient: 'vertical',
+                left: 10,
+            },
+            toolbox: {
+                show: true,
+                right: '10%',
+                feature: {
+                    mark: {show: true},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            tooltip: {},
+            series: [
+                {
+                    type: 'pie',
+                    radius: '55%',
+                }
+            ]
+        };
+        function getGenderChartData(chart) {
+            //标题数据
+            let building = '', unit = '';
+            if (buildingNumber !== '')
+                building = buildingNumber + '号楼';
+            else
+                building = '';
+            if (unitNumber !== '')
+                unit = unitNumber + '单元';
+            else
+                unit = '';
+            okUtils.ajax("/resident/statisticalGender", "get",
+                {buildingId: $("#buildingId").val(), unitId: $("#unitId").val()}, false).done(function (response) {
+                // console.log("response = "+ JSON.stringify(response));
+                chart.setOption({
+                    title: {
+                        text: [
+                            '{value|' + building + unit + '}',
+                        ].join('\n'),
+                        rich: {
+                            value: {
+                                color: '#4704be',
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                                lineHeight: 20,
+                            },
+                            name: {
+                                color: '#693016',
+                                lineHeight: 15
+                            },
+                        },
+                        top: '88%',
+                        left: '50%',
+                        textAlign: 'center',
+                        textStyle: {
+                            rich: {
+                                value: {
+                                    color: '#693016',
+                                    fontSize: 20,
+                                    fontWeight: 'bold',
+                                    lineHeight: 20,
+                                },
+                                name: {
+                                    color: '#909399',
+                                    lineHeight: 15
+                                },
+                            },
+                        },
+                    },
+                    dataset: {
+                        source: response
+                    },
+                    series: [
+                        {
+                            label: {
+                                formatter: '{b} : {d}%'
+                            },
+                            encode: {
+                                itemName: 'xData',
+                                value: 'count',
+                            },
+                        }
+                    ]
+                });
+            }).fail(function (error) {
+                console.log(error)
+            });
+        }
+        function initGenderChart() {
+            let chart = echarts.init($("#genderChart")[0], "theme");
+            chart.setOption(genderChartOption);
+            getGenderChartData(chart);
+            okUtils.echartsResize([chart]);
+        }
+
+
+
+//    peopleCountChart 柱状图
+        var peopleCountChartOption = {
+            color: 'rgba(165,217,117,0.99)',
+            legend: {left: 0},
+            toolbox: {
+                show: true,
+                right: '10%',
+                feature: {
+                    mark: {show: true},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            tooltip: {},
+            xAxis: {
+                type: 'category',
+                axisTick: {alignWithLabel: true},
+                axisLabel:{
+                    formatter: function (value, index) {
+                        return value+'号楼';
+                    }}
+            },
+            yAxis: {},
+            series: [
+                {
+                    name: "人数",
+                    type: 'bar',
+                    //设置柱状图大小
+                    barWidth: 40,
+                }
+            ]
+        };
+        function getPeopleCountChartData(chart) {
+            okUtils.ajax("/resident/statisticalPeopleCount", "get",
+                {buildingId: $("#buildingId").val(), unitId: $("#unitId").val()}, false).done(function (response) {
+                // console.log("response = "+ JSON.stringify(response));
+
+                chart.setOption({
+                    dataset: {source: response},
+                    series: [
+                        {
+                            name: "人数",
+                            encode: {x: 'xData', y: 'count'},
+                        }
+                    ]
+                });
+            }).fail(function (error) {
+                console.log(error)
+            });
+        }
+
+        function initPeopleCountChart() {
+            let chart = echarts.init($("#peopleCountChart")[0], "theme");
+            chart.setOption(peopleCountChartOption);
+            getPeopleCountChartData(chart);
+            okUtils.echartsResize([chart]);
+        }
+
+
+        initGenderChart();
+        initPeopleCountChart();
+    })
+</script>
+</html>

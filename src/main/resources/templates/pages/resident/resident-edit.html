@@ -488,6 +488,22 @@
 							parent.layer.close(parent.layer.getFrameIndex(window.name));
 						});
 					}
+					else if(response === 2){
+						okLayer.yellowSighMsg("此操作导致原住房中不存在户主，请先确保原住房中仅有户主一人",function () {
+							parent.layer.close(parent.layer.getFrameIndex(window.name));
+						});
+					}
+					else if(response === 3){
+						okLayer.yellowSighMsg("新住房已存在户主，请先更改该居民户主信息",function () {
+							parent.layer.close(parent.layer.getFrameIndex(window.name));
+						});
+					}
+					else if(response === 4){
+						okLayer.yellowSighMsg("住房中不存在户主，请先指定户主",function () {
+							parent.layer.close(parent.layer.getFrameIndex(window.name));
+						});
+					}
+
 
 				},
 				error:function () {

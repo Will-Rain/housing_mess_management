@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>居民户籍所在地统计图</title>
+    <link rel="stylesheet" th:href="@{/css/oksub.css}">
+    <script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+</head>
+<body>
+<div class="childrenBody ok-body-scroll">
+    <!--下拉框搜索区域-->
+    <div class="layui-row">
+        <div class="layui-col-md2">
+            <button class="layui-btn layui-btn-normal" id="all" lay-filter="all">
+                查看全部
+            </button>
+        </div>
+        <div class="layui-col-md10">
+            <form class="layui-form" lay-filter="search">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <input type="hidden" id="buildingId" name="buildingId" class="layui-input">
+                        <div class="layui-input-inline">
+                            <select id="buildingNumber" name="buildingNumber" lay-filter="buildingNumber"
+                                    lay-search></select>
+                        </div>
+
+                        <input type="hidden" id="unitId" name="unitId" class="layui-input">
+                        <div class="layui-input-inline">
+                            <select id="unitNumber" name="unitNumber" lay-filter="unitNumber" lay-search></select>
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <button class="layui-btn" lay-submit="search" lay-filter="search">
+                                <i class="layui-icon">&#xe615;</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <div class="ok-card-title">户籍所在地统计图</div>
+                </div>
+                <div class="ok-card-body map-body">
+                    <div style="height: 400px;" id="censusRegisterChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script th:src="@{/lib/echarts/echarts.min.js}"></script>
+<script type="text/javascript" th:src="@{/lib/echarts/world/js/china.js}"></script>
+<script>
+    layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils"], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let okLayer = layui.okLayer;
+        let okUtils = layui.okUtils;
+        let $ = layui.jquery;
+        okLoading.close($);
+
+        // 填充下拉框
+        function getSelectData() { //获取下拉框的值number
+            okUtils.ajax("/building/selectDistinctNumber", "get",
+                {}, false).done(function (response) {
+                // console.log(response.length);
+                let select = $("select[id='buildingNumber']");
+                $("select[id='unitNumber']").empty();
+                select.html("");
+                select.append("<option value=''>请选择楼宇号</option>");
+                $.each(response, function (i, item) {
+                    select.append("<option value=" + item + ">" + item + "号楼</option>");
+                });
+
+                form.render('select', 'search');
+            }).fail(function (error) {
+                console.log(error)
+            });
+        }
+        layer.ready(function () {
+            getSelectData();
+        });
+
+        var buildingNumber = '', unitNumber = '';
+        form.on("select(buildingNumber)", function (data) {
+            buildingNumber = data.value;
+
+            //填充隐藏域buildingId
+            if (data.value !== '' && data.value != null) {
+                okUtils.ajax("/building/selectDistinctId", "get",
+                    {number: data.value}, false).done(function (response) {
+                    $("#buildingId").val(response);
+
+
+                    //填充unitNumber下拉框
+                    okUtils.ajax("/unit/selectDistinctUnitNumber", "get",
+                        {buildingId: response}, false).done(function (response) {
+                        // console.log(response.length);
+
+                        let select = $("select[id='unitNumber']");
+                        select.empty();
+                        select.html("");
+                        select.append("<option value=''>请选择单元号</option>");
+                        $.each(response, function (i, item) {
+                            select.append("<option value=" + item + ">" + item + "单元</option>");
+                        });
+
+                        form.render('select', 'search');
+                    }).fail(function (error) {
+                        console.log(error)
+                    });
+
+                    form.render();
+
+                }).fail(function (error) {
+                    console.log(error)
+                });
+            }
+
+        });
+
+        form.on("select(unitNumber)", function (data) {
+            unitNumber = data.value;
+
+            if (data.value !== '' && data.value != null) {
+                okUtils.ajax("/unit/selectDistinctUnitId", "get",
+                    {buildingNumber: buildingNumber, unitNumber: data.value}, false).done(function (response) {
+                    $("#unitId").val(response);
+                    console.log("response = " + response);
+                    form.render();
+
+                }).fail(function (error) {
+                    console.log(error)
+                });
+            }
+        });
+
+
+        form.on("submit(search)", function (data) {
+            initCensusRegisterChart();
+
+
+            // 恢复初值
+            getSelectData();
+            $("#buildingId").val("");
+            $("#unitId").val("");
+            buildingNumber = '';
+            unitNumber = '';
+
+            return false;
+        });
+
+        $("#all").on('click', function () {
+            // 恢复初值
+            getSelectData();
+            $("#buildingId").val("");
+            $("#unitId").val("");
+
+
+            initCensusRegisterChart();
+        });
+
+
+//    censusRegisterChart 图
+        let censusRegisterChartOption = {
+            tooltip: {trigger: 'item'},
+            visualMap: {
+                show: true,      //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+                x: 'left',      // 地图的json字段必须是 name，value 命名，如{name: '山东', value: '12'}
+                y: 'center',    //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+                splitList: [    //★★★★★★ 这里需要改动 ★★★★★
+                    // {start: 500, end: 600}, {start: 400, end: 500}, {start: 300, end: 400},
+                    // {start: 200, end: 300}, {start: 100, end: 200}, {start: 0, end: 100},
+                    {start: 51, end: 60}, {start: 41, end: 50}, {start: 31, end: 40},
+                    {start: 21, end: 30}, {start: 11, end: 20}, {start: 0, end: 10},
+                ],
+                color: [
+                    '#5475f5', '#9feaa5', '#85daef', '#74e2ca',
+                    '#e6ac53', '#9fb5ea'
+                ]
+            },
+            series: [{
+                name: '户籍',
+                type: 'map',
+                mapType: 'china',
+                roam: true,
+                zoom: 1.2,
+                label: {normal: {show: true}, emphasis: {show: false}},
+            }]
+        };
+        function getCensusRegisterChartData(chart) {
+            //标题数据
+            let building = '', unit = '';
+            if (buildingNumber !== '')
+                building = buildingNumber + '号楼';
+            else
+                building = '';
+            if (unitNumber !== '')
+                unit = unitNumber + '单元';
+            else
+                unit = '';
+            okUtils.ajax("/resident/statisticalCensusRegister", "get",
+                {buildingId: $("#buildingId").val(), unitId: $("#unitId").val()}, false).done(function (response) {
+                console.log("response = " + JSON.stringify(response));
+
+                chart.setOption({
+                    title: {
+                        text: [
+                            '{value|' + building + unit + '}',
+                        ].join('\n'),
+                        rich: {
+                            value: {
+                                color: '#4704be',
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                                lineHeight: 20,
+                            },
+                            name: {
+                                color: '#693016',
+                                lineHeight: 15
+                            },
+                        },
+                        top: '88%',
+                        left: '10%',
+                        textAlign: 'center',
+                        textStyle: {
+                            rich: {
+                                value: {
+                                    color: '#693016',
+                                    fontSize: 20,
+                                    fontWeight: 'bold',
+                                    lineHeight: 20,
+                                },
+                                name: {
+                                    color: '#909399',
+                                    lineHeight: 15
+                                },
+                            },
+                        },
+                    },
+                    dataset: {
+                        source: response
+                    },
+                    series: [
+                        {
+                            name: '户籍',
+                            encode:{
+                                itemName: 'name',
+                                value: 'value',
+                            },
+                        }
+                    ]
+                });
+
+            }).fail(function (error) {
+                console.log(error)
+            });
+
+        }
+        function initCensusRegisterChart() {
+            let chart = echarts.init($("#censusRegisterChart")[0], "theme");
+            chart.setOption(censusRegisterChartOption);
+            getCensusRegisterChartData(chart);
+            okUtils.echartsResize([chart]);
+        }
+
+
+        initCensusRegisterChart();
+    })
+</script>
+</html>

@@ -63,6 +63,17 @@ public class MyMVCConfig implements WebMvcConfigurer {
         registry.addViewController("pages/chart/chart-china.html").setViewName("pages/chart/chart-china");
         registry.addViewController("pages/chart/chart-house.html").setViewName("pages/chart/chart-house");
         registry.addViewController("pages/chart/chart-resident.html").setViewName("pages/chart/chart-resident");
+
+        // 住房统计分析
+        registry.addViewController("pages/chart/houseRiskLevelChart.html").setViewName("pages/chart/houseRiskLevelChart");
+        registry.addViewController("pages/chart/houseUseChart.html").setViewName("pages/chart/houseUseChart");
+        registry.addViewController("pages/chart/houseSaleChart.html").setViewName("pages/chart/houseSaleChart");
+        // 居民统计分析
+        registry.addViewController("pages/chart/residentCountAndGenderChart.html").setViewName("pages/chart/residentCountAndGenderChart");
+        registry.addViewController("pages/chart/residentAgeChart.html").setViewName("pages/chart/residentAgeChart");
+        registry.addViewController("pages/chart/residentCensusChart.html").setViewName("pages/chart/residentCensusChart");
+        registry.addViewController("pages/chart/residentEducationalChart.html").setViewName("pages/chart/residentEducationalChart");
+        registry.addViewController("pages/chart/residentPartyChart.html").setViewName("pages/chart/residentPartyChart");
     }
 
     //注册拦截器

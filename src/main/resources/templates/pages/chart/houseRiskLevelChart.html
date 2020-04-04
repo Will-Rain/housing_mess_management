@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>住房危险性鉴定等级</title>
+    <link rel="stylesheet" th:href="@{/css/oksub.css}">
+    <script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+</head>
+<body>
+<div class="childrenBody ok-body-scroll">
+    <!--下拉框搜索区域-->
+    <div class="layui-row">
+        <div  class="layui-col-md2">
+            <button class="layui-btn layui-btn-normal" id="all" lay-filter="all">
+                查看全部
+            </button>
+        </div>
+        <div  class="layui-col-md10">
+        <form class="layui-form" lay-filter="search">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <input type="hidden" id="buildingId" name="buildingId" class="layui-input">
+                    <div class="layui-input-inline">
+                        <select id="buildingNumber" name="buildingNumber" lay-filter="buildingNumber" lay-search></select>
+                    </div>
+
+                    <input type="hidden" id="unitId" name="unitId" class="layui-input">
+                    <div class="layui-input-inline">
+                        <select id="unitNumber" name="unitNumber" lay-filter="unitNumber" lay-search></select>
+                    </div>
+
+                    <div class="layui-input-inline">
+                        <button class="layui-btn" lay-submit="search" lay-filter="search">
+                            <i class="layui-icon">&#xe615;</i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
+    <!--数据表格-->
+<!--    <table class="layui-hide" id="tableId" lay-filter="tableFilter"></table>-->
+
+<!--    <div style="height: 10px;"></div>-->
+<!--    <hr class="layui-bg-orange">-->
+
+<!--    住房危险性鉴定等级-->
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md7">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <div class="ok-card-title">住房危险性鉴定等级统计表</div>
+                </div>
+                <div class="ok-card-body map-body">
+                    <div style="height: 300px;" id="riskChart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md5">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <div class="ok-card-title">危房一览表</div>
+                </div>
+                <div class="ok-card-body map-body" style="height: 340px;">
+                    <!--数据表格-->
+                    <table class="layui-hide" id="riskTable" lay-filter="riskTable"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div style="height: 30px;"></div>
+
+
+</div>
+</body>
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script th:src="@{/lib/echarts/echarts.min.js}"></script>
+<script>
+    layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils"], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let okLayer = layui.okLayer;
+        let okUtils = layui.okUtils;
+        let $ = layui.jquery;
+        okLoading.close($);
+
+        // 填充下拉框
+        function getSelectData(){ //获取下拉框的值number
+            okUtils.ajax("/building/selectDistinctNumber", "get",
+                {}, false).done(function (response) {
+                // console.log(response.length);
+                let select = $("select[id='buildingNumber']");
+                $("select[id='unitNumber']").empty();
+                select.html("");
+                select.append("<option value=''>请选择楼宇号</option>");
+                $.each(response, function (i, item) {
+                    select.append("<option value="+ item+">"+ item+"号楼</option>");
+                });
+
+                form.render('select','search');
+            }).fail(function (error) {
+                console.log(error)
+            });
+        }
+
+        layer.ready(function () {
+            getSelectData();
+        });
+
+        var buildingNumber = '',unitNumber = '';
+        form.on("select(buildingNumber)", function (data) {
+            buildingNumber = data.value;
+
+            //填充隐藏域buildingId
+            if(data.value!=='' && data.value!=null){
+                okUtils.ajax("/building/selectDistinctId", "get",
+                    {number:data.value}, false).done(function (response) {
+                    $("#buildingId").val(response);
+
+
+                    //填充unitNumber下拉框
+                    okUtils.ajax("/unit/selectDistinctUnitNumber", "get",
+                        {buildingId: response}, false).done(function (response) {
+                        // console.log(response.length);
+
+                        let select = $("select[id='unitNumber']");
+                        select.empty();
+                        select.html("");
+                        select.append("<option value=''>请选择单元号</option>");
+                        $.each(response, function (i, item) {
+                            select.append("<option value="+ item+">"+ item+"单元</option>");
+                        });
+
+                        form.render('select','search');
+                    }).fail(function (error) {
+                        console.log(error)
+                    });
+
+                    form.render();
+
+                }).fail(function (error) {
+                    console.log(error)
+                });
+            }
+
+        });
+
+        form.on("select(unitNumber)", function (data) {
+            unitNumber = data.value;
+
+            if (data.value !== '' && data.value != null) {
+                okUtils.ajax("/unit/selectDistinctUnitId", "get",
+                    {buildingNumber:buildingNumber, unitNumber: data.value}, false).done(function (response) {
+                    $("#unitId").val(response);
+                    console.log("response = " + response);
+                    form.render();
+
+                }).fail(function (error) {
+                    console.log(error)
+                });
+            }
+        });
+
+
+        form.on("submit(search)", function (data) {
+            initRiskChart();
+            riskTable.reload({
+                url: "/house/riskTable",
+                where:{buildingId:$("#buildingId").val(), unitId:$("#unitId").val()},
+                page: {curr: 1}
+            });
+
+
+            // 恢复初值
+            getSelectData();
+            $("#buildingId").val("");
+            $("#unitId").val("");
+            buildingNumber = '';
+            unitNumber = '';
+
+            return false;
+        });
+
+        $("#all").on('click',function () {
+            getSelectData(); // 恢复初值
+            $("#buildingId").val("");
+            $("#unitId").val("");
+
+
+            initRiskChart();
+            riskTable.reload({
+                url: "/house/riskTable",
+                where:{buildingId:$("#buildingId").val(), unitId:$("#unitId").val()},
+                page: {curr: 1}
+            });
+        });
+
+
+
+//    riskChart 图表
+        var riskChartOption = {
+            legend:{},
+            toolbox: {
+                show : true,
+                right: '10%',
+                feature : {
+                    mark : {show: true},
+                    magicType : {show: true, type: ['line', 'bar']},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            tooltip: {},
+            xAxis: {type:'category',axisTick:{alignWithLabel:true}},
+            yAxis: {},
+            series:[
+                {
+                    name:"房屋数量",
+                    type: 'bar',
+                    //设置柱状图大小
+                    barWidth: 40,
+                }
+            ]
+        };
+
+        function getRiskChartData(chart) {
+            //标题数据
+            let building ='',unit ='';
+            if(buildingNumber !=='')
+                building = buildingNumber + '号楼';
+            else
+                building = '';
+            if(unitNumber !=='')
+                unit = unitNumber + '单元';
+            else
+                unit = '';
+
+            okUtils.ajax("/house/riskChart", "get",
+                {buildingId:$("#buildingId").val(), unitId:$("#unitId").val()}, false).done(function (response) {
+                // console.log("response = "+ JSON.stringify(response));
+                chart.setOption({
+                    title: {
+                        text: [
+                            '{value|' + building + unit + '}',
+                        ].join('\n'),
+                        rich: {
+                            value: {
+                                color: '#4704be',
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                                lineHeight: 20,
+                            },
+                            name: {
+                                color: '#693016',
+                                lineHeight: 15
+                            },
+                        },
+                        top: '88%',
+                        left: '50%',
+                        textAlign: 'center',
+                        textStyle: {
+                            rich: {
+                                value: {
+                                    color: '#693016',
+                                    fontSize: 20,
+                                    fontWeight: 'bold',
+                                    lineHeight: 20,
+                                },
+                                name: {
+                                    color: '#909399',
+                                    lineHeight: 15
+                                },
+                            },
+                        },
+                    },
+                    dataset: {
+                        // dimensions: ['role','count'],
+                        source: response
+                    },
+                    series: [
+                        {
+                            name: "房屋数量",
+                            encode: {x: 'xData', y: 'count'},
+                        }
+                    ]
+                });
+            }).fail(function (error) {
+                console.log(error)
+            });
+        }
+        function initRiskChart() {
+            var chart = echarts.init($("#riskChart")[0], "theme");
+            chart.setOption(riskChartOption);
+            getRiskChartData(chart);
+            okUtils.echartsResize([chart]);
+        }
+//risk表格
+        let riskTable = table.render({
+            elem: '#riskTable',
+            url: "/house/riskTable",
+            where:{buildingId:$("#buildingId").val(), unitId:$("#unitId").val()},
+            limit: 10,
+            limits: [10,20,30,50],
+            page: true,
+            toolbar: true,
+            height: 290,
+            size: "sm",
+            cols: [
+                [
+                    {field: "buildingNumber", title: "楼宇号", align:'center',
+                        templet: "<div>{{d.unit.building.buildingNumber}}号楼</div>"},
+                    {field: "unitNumber", title: "单元号", align:'center',
+                        templet: "<div>{{d.unit.unitNumber}}单元</div>"},
+                    {field: "houseNumber", title: "房屋号", align:'center',
+                        templet: "<div>{{d.houseNumber}}室</div>"},
+                    {field: "houseRiskLevel", title: "危险等级", align:'center',
+                        templet: "<div>{{d.houseRiskLevel}}</div>"},
+                    {field: "saleInfo", title: "是否出售", align:'center', templet: function (data) {
+                            if(data.saleInfo === 0) return "未售";
+                            else return "已售";}},
+                ]
+            ],
+            done: function (res, curr, count) {
+                // console.info(res, curr, count);
+            }
+        });
+
+//运行图表
+        initRiskChart();
+    })
+
+</script>
+
+</html>

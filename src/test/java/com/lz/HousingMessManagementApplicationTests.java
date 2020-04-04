@@ -5,13 +5,11 @@ import com.lz.dao.ResidentDao;
 import com.lz.dao.UnitDao;
 import com.lz.entity.Building;
 import com.lz.entity.House;
-import com.lz.entity.Party;
 import com.lz.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @SpringBootTest
 class HousingMessManagementApplicationTests {
@@ -68,8 +66,7 @@ class HousingMessManagementApplicationTests {
 
     @Test
     void test4() {
-        List<Party> list = partyService.queryAllByLimit(0, 10);
-        System.out.println(list.toString());
+        System.out.println(residentDao.statisticalAgeCompare());
 
     }
 

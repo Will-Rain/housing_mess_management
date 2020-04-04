@@ -66,24 +66,74 @@
   },
 
   {
-    "title": "图形展示",
+    "title": "统计分析",
     "href": "",
     "icon": "&#xe629;",
     "spread": false,
     "children": [
       {
-        "title": "住房信息图形化",
-        "href": "pages/chart/chart-house.html",
-        "fontFamily": "layui-icon",
+        "title": "住房信息统计分析",
+        "href": "",
         "icon": "&#xe62c;",
-        "spread": false
+        "spread": false,
+        "children" : [
+          {
+            "title": "住房质量情况",
+            "href": "pages/chart/houseRiskLevelChart.html",
+            "icon": "&#xe62c;",
+            "spread": false
+          },
+          {
+            "title": "住房出售情况",
+            "href": "pages/chart/houseUseChart.html",
+            "icon": "&#xe62c;",
+            "spread": false
+          },
+          {
+            "title": "住房使用情况",
+            "href": "pages/chart/houseSaleChart.html",
+            "icon": "&#xe62c;",
+            "spread": false
+          }
+        ]
       },
       {
-        "title": "居民信息图形化",
-        "href": "pages/chart/chart-resident.html",
-        "fontFamily": "layui-icon",
+        "title": "居民信息统计分析",
+        "href": "",
         "icon": "&#xe62c;",
-        "spread": false
+        "spread": false,
+        "children" : [
+          {
+            "title": "居民人数及性别",
+            "href": "pages/chart/residentCountAndGenderChart.html",
+            "icon": "&#xe62c;",
+            "spread": false
+          },
+          {
+            "title": "居民年龄统计图",
+            "href": "pages/chart/residentAgeChart.html",
+            "icon": "&#xe62c;",
+            "spread": false
+          },
+          {
+            "title": "居民户籍统计图",
+            "href": "pages/chart/residentCensusChart.html",
+            "icon": "&#xe62c;",
+            "spread": false
+          },
+          {
+            "title": "居民学历统计图",
+            "href": "pages/chart/residentEducationalChart.html",
+            "icon": "&#xe62c;",
+            "spread": false
+          },
+          {
+            "title": "居民党群统计图",
+            "href": "pages/chart/residentPartyChart.html",
+            "icon": "&#xe62c;",
+            "spread": false
+          }
+        ]
       }
     ]
   }

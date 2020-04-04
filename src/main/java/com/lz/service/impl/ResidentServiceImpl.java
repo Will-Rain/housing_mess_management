@@ -26,6 +26,7 @@ public class ResidentServiceImpl implements ResidentService {
     @Resource
     private HouseDao houseDao;
 
+
     /**
      * 通过ID查询单条数据
      *
@@ -158,6 +159,11 @@ public class ResidentServiceImpl implements ResidentService {
     @Override
     public List<Map<String, Object>> statisticalPeopleCount() {
         return this.residentDao.statisticalPeopleCount();
+    }
+
+    @Override
+    public List<Map<String, Object>> statisticalAgeCompare() {
+        return this.residentDao.statisticalAgeCompare();
     }
 
     //获取居民数量

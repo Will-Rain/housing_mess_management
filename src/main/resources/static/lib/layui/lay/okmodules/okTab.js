@@ -392,7 +392,7 @@ layui.define(["element", "jquery"], function (exports) {
 				$(_this).removeClass("refreshThis");
 			}, 2000)
 		} else {
-			layer.msg("请不要频繁点击哦！我会反应不过来的");
+			layer.msg("请不要频繁点击！");
 		}
 	};
 

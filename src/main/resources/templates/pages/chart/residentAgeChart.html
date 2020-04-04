@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>居民年龄统计图</title>
+    <link rel="stylesheet" th:href="@{/css/oksub.css}">
+    <script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+</head>
+<body>
+<div class="childrenBody ok-body-scroll">
+
+    <!--    第一行统计图-->
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <div class="ok-card-title">年龄分楼栋对比统计图</div>
+                </div>
+                <div class="ok-card-body map-body">
+                    <div style="height: 400px;" id="ageCompareChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="height: 50px;"></div>
+
+    <!--下拉框搜索区域-->
+    <div class="layui-row">
+        <div class="layui-col-md2">
+            <button class="layui-btn layui-btn-normal" id="all" lay-filter="all">
+                查看全部
+            </button>
+        </div>
+        <div class="layui-col-md10">
+            <form class="layui-form" lay-filter="search">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <input type="hidden" id="buildingId" name="buildingId" class="layui-input">
+                        <div class="layui-input-inline">
+                            <select id="buildingNumber" name="buildingNumber" lay-filter="buildingNumber"
+                                    lay-search></select>
+                        </div>
+
+                        <input type="hidden" id="unitId" name="unitId" class="layui-input">
+                        <div class="layui-input-inline">
+                            <select id="unitNumber" name="unitNumber" lay-filter="unitNumber" lay-search></select>
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <button class="layui-btn" lay-submit="search" lay-filter="search">
+                                <i class="layui-icon">&#xe615;</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!--    第二行-->
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <div class="ok-card-title">年龄统计图</div>
+                </div>
+                <div class="ok-card-body map-body">
+                    <div style="height: 300px;" id="ageChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script th:src="@{/lib/echarts/echarts.min.js}"></script>
+<script type="text/javascript" th:src="@{/lib/echarts/world/js/china.js}"></script>
+<script>
+    layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils"], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let okLayer = layui.okLayer;
+        let okUtils = layui.okUtils;
+        let $ = layui.jquery;
+        okLoading.close($);
+
+        // 填充下拉框
+        function getSelectData() { //获取下拉框的值number
+            okUtils.ajax("/building/selectDistinctNumber", "get",
+                {}, false).done(function (response) {
+                // console.log(response.length);
+                let select = $("select[id='buildingNumber']");
+                $("select[id='unitNumber']").empty();
+                select.html("");
+                select.append("<option value=''>请选择楼宇号</option>");
+                $.each(response, function (i, item) {
+                    select.append("<option value=" + item + ">" + item + "号楼</option>");
+                });
+
+                form.render('select', 'search');
+            }).fail(function (error) {
+                console.log(error)
+            });
+        }
+        layer.ready(function () {
+            getSelectData();
+        });
+
+        var buildingNumber = '', unitNumber = '';
+        form.on("select(buildingNumber)", function (data) {
+            buildingNumber = data.value;
+
+            //填充隐藏域buildingId
+            if (data.value !== '' && data.value != null) {
+                okUtils.ajax("/building/selectDistinctId", "get",
+                    {number: data.value}, false).done(function (response) {
+                    $("#buildingId").val(response);
+
+
+                    //填充unitNumber下拉框
+                    okUtils.ajax("/unit/selectDistinctUnitNumber", "get",
+                        {buildingId: response}, false).done(function (response) {
+                        // console.log(response.length);
+
+                        let select = $("select[id='unitNumber']");
+                        select.empty();
+                        select.html("");
+                        select.append("<option value=''>请选择单元号</option>");
+                        $.each(response, function (i, item) {
+                            select.append("<option value=" + item + ">" + item + "单元</option>");
+                        });
+
+                        form.render('select', 'search');
+                    }).fail(function (error) {
+                        console.log(error)
+                    });
+
+                    form.render();
+
+                }).fail(function (error) {
+                    console.log(error)
+                });
+            }
+
+        });
+
+        form.on("select(unitNumber)", function (data) {
+            unitNumber = data.value;
+
+            if (data.value !== '' && data.value != null) {
+                okUtils.ajax("/unit/selectDistinctUnitId", "get",
+                    {buildingNumber: buildingNumber, unitNumber: data.value}, false).done(function (response) {
+                    $("#unitId").val(response);
+                    console.log("response = " + response);
+                    form.render();
+
+                }).fail(function (error) {
+                    console.log(error)
+                });
+            }
+        });
+
+
+        form.on("submit(search)", function (data) {
+            initAgeChart();
+
+            // 恢复初值
+            getSelectData();
+            $("#buildingId").val("");
+            $("#unitId").val("");
+            buildingNumber = '';
+            unitNumber = '';
+
+            return false;
+        });
+
+        $("#all").on('click', function () {
+            // 恢复初值
+            getSelectData();
+            $("#buildingId").val("");
+            $("#unitId").val("");
+
+
+            initAgeChart();
+        });
+
+
+//    ageChart 柱状图
+        var ageChartOption = {
+            legend: {left: 0},
+            toolbox: {
+                show: true,
+                right: '10%',
+                feature: {
+                    mark: {show: true},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            tooltip: {},
+            xAxis: {type: 'category', axisTick: {alignWithLabel: true}},
+            yAxis: {},
+            series: [
+                {
+                    name: "人数",
+                    type: 'bar',
+                    //设置柱状图大小
+                    barWidth: 40,
+                }
+            ]
+        };
+        function getAgeChartData(chart) {
+            //标题数据
+            let building = '', unit = '';
+            if (buildingNumber !== '')
+                building = buildingNumber + '号楼';
+            else
+                building = '';
+            if (unitNumber !== '')
+                unit = unitNumber + '单元';
+            else
+                unit = '';
+
+            okUtils.ajax("/resident/statisticalAge", "get",
+                {buildingId: $("#buildingId").val(), unitId: $("#unitId").val()}, false).done(function (response) {
+                // console.log("response = "+ JSON.stringify(response));
+                chart.setOption({
+                    title: {
+                        text: [
+                            '{value|' + building + unit + '}',
+                        ].join('\n'),
+                        rich: {
+                            value: {
+                                color: '#4704be',
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                                lineHeight: 20,
+                            },
+                            name: {
+                                color: '#693016',
+                                lineHeight: 15
+                            },
+                        },
+                        top: '88%',
+                        left: '50%',
+                        textAlign: 'center',
+                        textStyle: {
+                            rich: {
+                                value: {
+                                    color: '#693016',
+                                    fontSize: 20,
+                                    fontWeight: 'bold',
+                                    lineHeight: 20,
+                                },
+                                name: {
+                                    color: '#909399',
+                                    lineHeight: 15
+                                },
+                            },
+                        },
+                    },
+                    dataset: {source: response},
+                    series: [
+                        {
+                            name: "人数",
+                            encode: {x: 'xData', y: 'count'},
+                        }
+                    ]
+                });
+            }).fail(function (error) {
+                console.log(error)
+            });
+        }
+        function initAgeChart() {
+            var chart = echarts.init($("#ageChart")[0], "theme");
+            chart.setOption(ageChartOption);
+            getAgeChartData(chart);
+            okUtils.echartsResize([chart]);
+        }
+
+
+// ageCompareChart 年龄对比统计图
+//         var ageCompareChartOption = {
+//             legend: {left: 0},
+//             toolbox: {
+//                 show: true,
+//                 right: '10%',
+//                 feature: {
+//                     mark: {show: true},
+//                     magicType: {show: true, type: ['line', 'bar']},
+//                     restore: {show: true},
+//                     saveAsImage: {show: true}
+//                 }
+//             },
+//             tooltip: {},
+//             xAxis: {type: 'category', axisTick: {alignWithLabel: true}},
+//             yAxis: {},
+//             series: [
+//                 {type: 'bar'},
+//             ]
+//         };
+//         function getAgeCompareChartData(chart) {
+//             okUtils.ajax("/resident/statisticalAgeCompare", "get",
+//                 {buildingId: $("#buildingId").val(), unitId: $("#unitId").val()}, false).done(function (response) {
+//                 // console.log("response = "+ JSON.stringify(response));
+//                 chart.setOption({
+//                     dataset: {source: response},
+//                     series: [
+//                         {encode: { y: 'count'}}
+//                     ]
+//                 });
+//             }).fail(function (error) {
+//                 console.log(error)
+//             });
+//         }
+//         function initAgeCompareChart() {
+//             var chart = echarts.init($("#ageCompareChart")[0], "theme");
+//             chart.setOption(ageCompareChartOption);
+//             getAgeChartData(chart);
+//             okUtils.echartsResize([chart]);
+//         }
+
+
+        var ageCompareChart = function (axisData,seriesData) {
+            var myChart = echarts.init($("#ageCompareChart")[0], "theme");
+            var newData = [];
+            var legendData = [];
+            for(let i = 0; i < seriesData.length; i++) {
+                let chartItem = new serChartItem();
+                chartItem.name = seriesData[i].name;
+                legendData.push(seriesData[i].name+'');
+                chartItem.data = seriesData[i].data;
+                newData.push(chartItem);
+            }
+
+            var option = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: legendData,
+                    left: 0,
+                    formatter: function (data) {
+                        return data + '号楼';
+                    }
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none'
+                        },
+                        magicType: { type: ['line', 'bar'] },
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    data: axisData
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: newData
+            };
+            myChart.setOption(option);
+            okUtils.echartsResize([myChart]);
+        };
+
+        var serChartItem = function () {
+            return {
+                name: '',
+                type: 'bar',
+                data: []
+            }
+        };
+
+
+        $(document).ready(function () {
+            let axisData = [];
+            let buildingNumber = [];
+            let seriesData = [];
+            okUtils.ajax("/building/selectDistinctNumber", "get", {}, false).done(function (response) {
+                // console.log("response = "+ JSON.stringify(response));
+                buildingNumber = response;
+                okUtils.ajax("/resident/statisticalAgeCompare", "get", {}, false).done(function (response) {
+                    // console.log("response = "+ JSON.stringify(response));
+
+                    let set = new Set();
+                    $.each(response, function (index, item) { //遍历response，去掉重复的x轴数据
+                        set.add(item.xData);
+                    });
+                    // x坐标数据
+                    axisData = Array.from(set);
+
+                    $.each(buildingNumber, function (index, item) { //遍历楼宇号，seriesData赋初值
+                        let data = [];      // 踩坑：不能放到each循环外，否则seriesData.data会指向同一片内存区域
+                        for(let i = 0; i < axisData.length; i++)
+                            data.push(0);
+
+                        let map = {
+                            'name' : item,
+                            'data' : data
+                        };
+                        seriesData.push(map);
+                    });
+
+                    $.each(response, function (index, item) { //遍历response，seriesData重新赋值
+                        let dataModifyIndex = axisData.indexOf(item.xData); // dataModifyIndex是axisData的维度对应的seriesData.data的索引值
+                        $.each(seriesData, function (seriesDataIndex, seriesDataItem) {
+                            if(item.buildingNumber === seriesDataItem.name)
+                                seriesData[seriesDataIndex].data[dataModifyIndex] = item.count;
+                        })
+                    });
+
+                    // console.log("new seriesData ====" + JSON.stringify(seriesData));
+
+                    ageCompareChart(axisData, seriesData);
+
+                }).fail(function (error) {
+                    console.log(error)
+                });
+            }).fail(function (error) {
+                console.log(error)
+            });
+
+
+
+            var axisData1 = ['0-10', '10-20', '周三', '周四', '周五', '周六', '周日'];
+            var seriesData1 = [{ name: '直接访问', data: [0, 0, 301, 334, 390, 330, 320] },
+                {name: 'buildingNumber', data: [120, 132, 101, 134, 120, 230, 210]},
+                {name: '联盟广告', data: [220, 182, 191, 234, 290, 330, 310]},
+                {name: '视频广告', data: [150, 212, 201, 154, 190, 330, 410]},
+                { name: '搜索引擎', data: [820, 832, 901, 934, 1290, 1330, 1320] }];
+
+            // ageCompareChart(axisData1, seriesData1);
+
+        });
+
+        initAgeChart();
+        // initAgeCompareChart();
+    })
+</script>
+</html>

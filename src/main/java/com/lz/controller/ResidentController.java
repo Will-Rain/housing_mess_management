@@ -139,9 +139,29 @@ public class ResidentController {
     public int updateResident(@RequestBody Resident resident) {
         System.out.println(resident);
         int msg = 0; //修改失败
+
+        if(residentService.queryById(resident.getId()).getIsHeadOfHousehold() == 1
+                && (residentService.queryById(resident.getId()).getHouse().getHousePeopleCount() > 1)) {
+            msg = 2; //此操作导致原住房中不存在户主，请先确保原住房中仅有户主一人
+            return msg;
+        }
+        if(resident.getIsHeadOfHousehold() == 1
+                && residentService.queryHeadOfHousehold("", "", resident.getHouse().getId()).size() > 0)
+        {
+            msg = 3; // 新住房已存在户主，请先更改该居民户主信息
+            return msg;
+        }
+        if(resident.getIsHeadOfHousehold() ==0
+                && residentService.queryHeadOfHousehold("", "", resident.getHouse().getId()).size() == 0)
+        {
+            msg = 4; //新住房中不存在户主，请先指定户主
+            return msg;
+        }
+
         if (residentService.update(resident) != null) {
             msg = 1; //修改成功
         }
+
         return msg;
     }
 
@@ -191,6 +211,12 @@ public class ResidentController {
     @RequestMapping("/statisticalPeopleCount")
     public List<Map<String, Object>> statisticalPeopleCount() {
         return residentService.statisticalPeopleCount();
+    }
+
+    //年龄对比统计图
+    @RequestMapping("/statisticalAgeCompare")
+    public List<Map<String, Object>> statisticalAgeCompare() {
+        return residentService.statisticalAgeCompare();
     }
 
     //获取居民数量
