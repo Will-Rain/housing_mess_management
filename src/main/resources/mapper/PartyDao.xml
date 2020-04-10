@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lz.dao.PartyDao">
+
+    <resultMap type="com.lz.entity.Party" id="PartyMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="party" column="party" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="PartyMap">
+        select
+          id, party
+        from housing_info_management.party
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PartyMap">
+        select
+          id, party
+        from housing_info_management.party
+        <if test="limit != 0">
+        limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="PartyMap">
+        select
+          id, party
+        from housing_info_management.party
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="party != null and party != ''">
+                and party = #{party}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectDistinctParty" resultType="java.lang.String">
+        select
+            distinct party.party
+        from housing_info_management.party
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into housing_info_management.party(party)
+        values (#{party})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update housing_info_management.party
+        <set>
+            <if test="party != null and party != ''">
+                party = #{party},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from housing_info_management.party where id = #{id}
+    </delete>
+
+</mapper>
