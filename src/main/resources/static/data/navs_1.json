@@ -85,13 +85,13 @@
           },
           {
             "title": "住房出售情况",
-            "href": "pages/chart/houseUseChart.html",
+            "href": "pages/chart/houseSaleChart.html",
             "icon": "&#xe62c;",
             "spread": false
           },
           {
             "title": "住房使用情况",
-            "href": "pages/chart/houseSaleChart.html",
+            "href": "pages/chart/houseUseChart.html",
             "icon": "&#xe62c;",
             "spread": false
           }

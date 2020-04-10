@@ -11,12 +11,14 @@
     <!--下拉框搜索区域-->
     <div class="layui-row">
         <div  class="layui-col-md2">
-            <button class="layui-btn layui-btn-normal" id="all" lay-filter="all">
+            <button class="layui-btn layui-btn-normal layui-btn-radius" id="all" lay-filter="all">
                 查看全部
             </button>
         </div>
-        <div  class="layui-col-md10">
+        <div  class="layui-col-md2"></div>
+        <div  class="layui-col-md8">
         <form class="layui-form" lay-filter="search">
+
             <div class="layui-form-item">
                 <div class="layui-inline">
                     <input type="hidden" id="buildingId" name="buildingId" class="layui-input">
@@ -50,19 +52,21 @@
         <div class="layui-col-md7">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <div class="ok-card-title">住房危险性鉴定等级统计表</div>
+                    <div class="ok-card-title" style="font-size: 25px;text-align: center">
+                        住房危险性鉴定等级统计图</div>
                 </div>
                 <div class="ok-card-body map-body">
-                    <div style="height: 300px;" id="riskChart"></div>
+                    <div style="height: 400px;" id="riskChart"></div>
                 </div>
             </div>
         </div>
         <div class="layui-col-md5">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <div class="ok-card-title">危房一览表</div>
+                    <div class="ok-card-title" style="font-size: 25px;text-align: center">
+                        危房一览表</div>
                 </div>
-                <div class="ok-card-body map-body" style="height: 340px;">
+                <div class="ok-card-body map-body" style="height: 440px;">
                     <!--数据表格-->
                     <table class="layui-hide" id="riskTable" lay-filter="riskTable"></table>
                 </div>
@@ -202,16 +206,20 @@
 
 //    riskChart 图表
         var riskChartOption = {
-            legend:{},
+            legend:{show: false},
             toolbox: {
                 show : true,
                 right: '10%',
+                top: 0,
                 feature : {
                     mark : {show: true},
                     magicType : {show: true, type: ['line', 'bar']},
                     restore : {show: true},
                     saveAsImage : {show: true}
                 }
+            },
+            grid: {
+                bottom: '30%'
             },
             tooltip: {},
             xAxis: {type:'category',axisTick:{alignWithLabel:true}},
@@ -222,8 +230,41 @@
                     type: 'bar',
                     //设置柱状图大小
                     barWidth: 40,
+
+                    itemStyle: {        //上方显示数值
+                        normal: {
+                            label: {
+                                show: true, //开启显示
+                                position: 'top', //在上方显示
+                                textStyle: { //数值样式
+                                    color: 'blue',
+                                    fontSize: 16
+                                }
+                            }
+                        }
+                    }
                 }
-            ]
+            ],
+
+            graphic: [
+                {
+                    type: 'text',
+                    z: 100,
+                    left: '0',
+                    bottom: 0,
+                    style: {
+                        fill: '#333',
+                        text: [
+                            'A级：结构承载力能满足正常使用要求，无危险点，房屋结构安全',
+                            'B级：结构承载力基本能满足正常使用要求，个别结构构件处于危险状态',
+                            'C级：部分承重结构承载力不能满足正常使用要求，局部出现险情，需要加固或局部改造',
+                            'D级：承重结构承载力已不能满足正常使用要求，房屋整体出现险情，一般应整体拆除'
+                        ].join('\n'),
+                        font: '15px Microsoft YaHei'
+                    }
+                }
+            ],
+
         };
 
         function getRiskChartData(chart) {
@@ -244,7 +285,7 @@
                 chart.setOption({
                     title: {
                         text: [
-                            '{value|' + building + unit + '}',
+                            '{value|' + building + unit + '}'
                         ].join('\n'),
                         rich: {
                             value: {
@@ -258,7 +299,7 @@
                                 lineHeight: 15
                             },
                         },
-                        top: '88%',
+                        top: '75%',
                         left: '50%',
                         textAlign: 'center',
                         textStyle: {
@@ -318,9 +359,9 @@
                         templet: "<div>{{d.houseNumber}}室</div>"},
                     {field: "houseRiskLevel", title: "危险等级", align:'center',
                         templet: "<div>{{d.houseRiskLevel}}</div>"},
-                    {field: "saleInfo", title: "是否出售", align:'center', templet: function (data) {
-                            if(data.saleInfo === 0) return "未售";
-                            else return "已售";}},
+                    // {field: "saleInfo", title: "是否出售", align:'center', templet: function (data) {
+                    //         if(data.saleInfo === 0) return "未售";
+                    //         else return "已售";}},
                 ]
             ],
             done: function (res, curr, count) {

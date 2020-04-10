@@ -11,7 +11,7 @@
     <!--下拉框搜索区域-->
     <div class="layui-row">
         <div  class="layui-col-md2">
-            <button class="layui-btn layui-btn-normal" id="all" lay-filter="all">
+            <button class="layui-btn layui-btn-normal layui-btn-radius" id="all" lay-filter="all">
                 查看全部
             </button>
         </div>
@@ -45,7 +45,8 @@
         <div class="layui-col-md6">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <div class="ok-card-title">住房出售统计表</div>
+                    <div class="ok-card-title" style="font-size: 25px;text-align: center">
+                        住房出售统计表图</div>
                 </div>
                 <div class="ok-card-body map-body">
                     <div style="height: 300px;" id="saleChart"></div>
@@ -55,7 +56,8 @@
         <div class="layui-col-md6">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <div class="ok-card-title">未出售住房一览表</div>
+                    <div class="ok-card-title" style="font-size: 25px;text-align: center">
+                        未出售住房一览表</div>
                 </div>
                 <div class="ok-card-body map-body" style="height: 340px;">
                     <table class="layui-hide" id="saleTable" lay-filter="saleTable"></table>

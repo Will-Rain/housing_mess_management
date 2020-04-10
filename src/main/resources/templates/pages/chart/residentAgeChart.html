@@ -14,7 +14,8 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <div class="ok-card-title">年龄分楼栋对比统计图</div>
+                    <div class="ok-card-title" style="font-size: 25px;text-align: center">
+                        年龄分楼栋对比统计图</div>
                 </div>
                 <div class="ok-card-body map-body">
                     <div style="height: 400px;" id="ageCompareChart"></div>
@@ -25,56 +26,60 @@
     <div style="height: 50px;"></div>
 
     <!--下拉框搜索区域-->
-    <div class="layui-row">
-        <div class="layui-col-md2">
-            <button class="layui-btn layui-btn-normal" id="all" lay-filter="all">
-                查看全部
-            </button>
-        </div>
-        <div class="layui-col-md10">
-            <form class="layui-form" lay-filter="search">
-                <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <input type="hidden" id="buildingId" name="buildingId" class="layui-input">
-                        <div class="layui-input-inline">
-                            <select id="buildingNumber" name="buildingNumber" lay-filter="buildingNumber"
-                                    lay-search></select>
-                        </div>
+<!--    <div class="layui-row">-->
+<!--        <div class="layui-col-md2">-->
+<!--            <button class="layui-btn layui-btn-normal" id="all" lay-filter="all">-->
+<!--                查看全部-->
+<!--            </button>-->
+<!--        </div>-->
+<!--        <div class="layui-col-md10">-->
+<!--            <form class="layui-form" lay-filter="search">-->
+<!--                <div class="layui-form-item">-->
+<!--                    <div class="layui-inline">-->
+<!--                        <input type="hidden" id="buildingId" name="buildingId" class="layui-input">-->
+<!--                        <div class="layui-input-inline">-->
+<!--                            <select id="buildingNumber" name="buildingNumber" lay-filter="buildingNumber"-->
+<!--                                    lay-search></select>-->
+<!--                        </div>-->
 
-                        <input type="hidden" id="unitId" name="unitId" class="layui-input">
-                        <div class="layui-input-inline">
-                            <select id="unitNumber" name="unitNumber" lay-filter="unitNumber" lay-search></select>
-                        </div>
+<!--                        <input type="hidden" id="unitId" name="unitId" class="layui-input">-->
+<!--                        <div class="layui-input-inline">-->
+<!--                            <select id="unitNumber" name="unitNumber" lay-filter="unitNumber" lay-search></select>-->
+<!--                        </div>-->
 
-                        <div class="layui-input-inline">
-                            <button class="layui-btn" lay-submit="search" lay-filter="search">
-                                <i class="layui-icon">&#xe615;</i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+<!--                        <div class="layui-input-inline">-->
+<!--                            <button class="layui-btn" lay-submit="search" lay-filter="search">-->
+<!--                                <i class="layui-icon">&#xe615;</i>-->
+<!--                            </button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </form>-->
+<!--        </div>-->
+<!--    </div>-->
 
 
     <!--    第二行-->
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-md12">
-            <div class="layui-card">
-                <div class="layui-card-header">
-                    <div class="ok-card-title">年龄统计图</div>
-                </div>
-                <div class="ok-card-body map-body">
-                    <div style="height: 300px;" id="ageChart"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+<!--    <div class="layui-row layui-col-space15">-->
+<!--        <div class="layui-col-md12">-->
+<!--            <div class="layui-card">-->
+<!--                <div class="layui-card-header">-->
+<!--                    <div class="ok-card-title" style="font-size: 25px;text-align: center">年龄统计图</div>-->
+<!--                </div>-->
+<!--                <div class="ok-card-body map-body">-->
+<!--                    <div style="height: 300px;" id="ageChart"></div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 </div>
 </body>
 <script th:src="@{/lib/layui/layui.js}"></script>
 <script th:src="@{/lib/echarts/echarts.min.js}"></script>
+
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script th:src="@{/js/jquery.table2excel.js}"></script>
+
 <script type="text/javascript" th:src="@{/lib/echarts/world/js/china.js}"></script>
 <script>
     layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils"], function () {
@@ -188,7 +193,7 @@
 
 //    ageChart 柱状图
         var ageChartOption = {
-            legend: {left: 0},
+            legend: {show: false, left: 0},
             toolbox: {
                 show: true,
                 right: '10%',
@@ -196,7 +201,7 @@
                     mark: {show: true},
                     magicType: {show: true, type: ['line', 'bar']},
                     restore: {show: true},
-                    saveAsImage: {show: true}
+                    saveAsImage: {show: true},
                 }
             },
             tooltip: {},
@@ -208,6 +213,18 @@
                     type: 'bar',
                     //设置柱状图大小
                     barWidth: 40,
+                    itemStyle: {        //上方显示数值
+                        normal: {
+                            label: {
+                                show: true, //开启显示
+                                position: 'top', //在上方显示
+                                textStyle: { //数值样式
+                                    color: 'blue',
+                                    fontSize: 16
+                                }
+                            }
+                        }
+                    }
                 }
             ]
         };
@@ -342,6 +359,7 @@
                 legend: {
                     data: legendData,
                     left: 0,
+                    orient: 'vertical',
                     formatter: function (data) {
                         return data + '号楼';
                     }
@@ -354,7 +372,45 @@
                         },
                         magicType: { type: ['line', 'bar'] },
                         restore: {},
-                        saveAsImage: {}
+                        saveAsImage: {},
+                        dataView : {
+                            show: true,
+                            title: '居民年龄统计表',
+                            // readOnly: true,
+                            lang: ['居民年龄统计表', '关闭', '导出Excel'],
+                            // 使用 table2excel 从表格导出excel
+                            contentToOption: function (opts) {
+                                $("#tableExcel_Day").table2excel({
+                                    exclude: ".noExl", //过滤位置的 css 类名
+                                    filename: '居民年龄统计表' + ".xls", //文件名称
+                                    name: "Excel Document Name.xls",
+                                    exclude_img: true,
+                                    exclude_links: true,
+                                    exclude_inputs: true
+                                });
+                            },
+                            optionToContent:function(opt){
+                                let axisData = opt.xAxis[0].data; //坐标数据
+                                let series = opt.series; //折线图数据
+                                let tdHeads = '<td  style="padding: 9px 30px">年龄段</td>'; //表头
+                                let tdBodys = ''; //数据
+                                series.forEach(function (item) {
+                                    //组装表头
+                                    tdHeads += `<td style="padding: 9px 30px">${item.name}号楼</td>`;
+                                });
+                                let table = `<table id="tableExcel_Day" border="1" style="margin-left:20px;border-collapse:collapse;font-size:14px;text-align:center"><tbody><tr>${tdHeads} </tr>`;
+                                for (let i = 0, l = axisData.length; i < l; i++) {
+                                    for (let j = 0; j < series.length; j++) {
+                                        //组装表数据
+                                        tdBodys += `<td>${ series[j].data[i]}</td>`;
+                                    }
+                                    table += `<tr><td style="padding: 10px 30px">${axisData[i]}</td>${tdBodys}</tr>`;
+                                    tdBodys = '';
+                                }
+                                table += '</tbody></table>';
+                                return table;
+                            }
+                        },
                     }
                 },
                 xAxis: {
@@ -370,11 +426,25 @@
             okUtils.echartsResize([myChart]);
         };
 
+        // series 数据
         var serChartItem = function () {
             return {
                 name: '',
                 type: 'bar',
-                data: []
+                data: [],
+                // 条形图上方显示数值
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: true, //开启显示
+                            position: 'top', //在上方显示
+                            textStyle: { //数值样式
+                                color: 'blue',
+                                fontSize: 12
+                            }
+                        }
+                    }
+                }
             }
         };
 

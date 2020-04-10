@@ -45,7 +45,7 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <div class="ok-card-title">受教育程度统计图</div>
+                    <div class="ok-card-title" style="font-size: 25px;text-align: center">受教育程度统计图</div>
                 </div>
                 <div class="ok-card-body map-body">
                     <div style="height: 300px;" id="educationalChart"></div>
@@ -173,7 +173,7 @@
 //    educationalChart 柱状图
         var educationalChartOption = {
             color: 'rgb(113,158,255)',
-            legend: {left: 0},
+            legend: {show: false, left: 0},
             toolbox: {
                 show: true,
                 right: '10%',
@@ -188,7 +188,7 @@
             xAxis: {
                 type: 'category',
                 axisTick: {alignWithLabel: true},
-                data: ['无', '小学', '初中', '高中', '专科', '本科', '研究生']
+                data: ['无', '小学', '初中', '高中', '专科', '本科', '研究生'],
             },
             yAxis: {},
             series: [
@@ -197,6 +197,19 @@
                     type: 'bar',
                     //设置柱状图大小
                     barWidth: 40,
+                    // 条形图上方显示数值
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true, //开启显示
+                                position: 'top', //在上方显示
+                                textStyle: { //数值样式
+                                    color: 'blue',
+                                    fontSize: 16
+                                }
+                            }
+                        }
+                    }
                 }
             ]
         };

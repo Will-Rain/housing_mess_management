@@ -134,7 +134,7 @@
                 okUtils.ajax("/unit/selectDistinctUnitId", "get",
                     {buildingNumber: buildingNumber, unitNumber: data.value}, false).done(function (response) {
                     $("#unitId").val(response);
-                    console.log("response = " + response);
+                    // console.log("response = " + response);
                     form.render();
 
                 }).fail(function (error) {
