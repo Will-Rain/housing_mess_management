@@ -144,7 +144,7 @@
 		}
 
 		function add() {
-			okLayer.open("添加住房", "house-add.html", "80%", "90%", null, function () {
+			okLayer.open("添加住房", "house-add.html", "50%", "90%", null, function () {
 				getSelectData();
 				houseTable.reload();  // 表格重载
 
@@ -159,7 +159,7 @@
 
 		function edit(data) {
 			editData = data;
-			okLayer.open("更新住房信息", "house-edit.html", "80%", "90%", function (layero) {
+			okLayer.open("更新住房信息", "house-edit.html", "50%", "90%", function (layero) {
 				// var iframeWin = window[layero.find("iframe")[0]["name"]];
 				// iframeWin.initForm(data);
 			}, function () {

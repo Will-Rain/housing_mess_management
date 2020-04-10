@@ -9,30 +9,30 @@
 </head>
 <body>
 <div class="ok-body">
-	<!--下拉框搜索区域-->
-	<div class="layui-row">
-		<form class="layui-form"  lay-filter="search">
-			<div class="layui-form-item">
-				<div class="layui-inline">
-					<div class="layui-input-inline">
-						<select id="name" name="name" lay-filter="name" lay-search></select>
-					</div>
-					<div class="layui-input-inline">
-						<select id="password" name="password" lay-filter="password" lay-search></select>
-					</div>
-					<div class="layui-input-inline">
-						<select id="role" name="role" lay-filter="role" lay-search></select>
-					</div>
+<!--	&lt;!&ndash;下拉框搜索区域&ndash;&gt;-->
+<!--	<div class="layui-row">-->
+<!--		<form class="layui-form"  lay-filter="search">-->
+<!--			<div class="layui-form-item">-->
+<!--				<div class="layui-inline">-->
+<!--					<div class="layui-input-inline">-->
+<!--						<select id="name" name="name" lay-filter="name" lay-search></select>-->
+<!--					</div>-->
+<!--					<div class="layui-input-inline">-->
+<!--						<select id="password" name="password" lay-filter="password" lay-search></select>-->
+<!--					</div>-->
+<!--					<div class="layui-input-inline">-->
+<!--						<select id="role" name="role" lay-filter="role" lay-search></select>-->
+<!--					</div>-->
 
-					<div class="layui-input-inline">
-						<button class="layui-btn" lay-submit="submit" lay-filter="search">
-							<i class="layui-icon">&#xe615;</i>
-						</button>
-					</div>
-				</div>
-			</div>
-		</form>
-	</div>
+<!--					<div class="layui-input-inline">-->
+<!--						<button class="layui-btn" lay-submit="submit" lay-filter="search">-->
+<!--							<i class="layui-icon">&#xe615;</i>-->
+<!--						</button>-->
+<!--					</div>-->
+<!--				</div>-->
+<!--			</div>-->
+<!--		</form>-->
+<!--	</div>-->
 	<!--数据表格-->
 	<table class="layui-hide" id="tableId" lay-filter="tableFilter"></table>
 
@@ -40,28 +40,18 @@
 	<hr class="layui-bg-orange">
 
 	<!--图表-->
-	<div class="layui-row layui-col-space15">
-		<div class="layui-col-md12">
-			<div class="layui-card">
-				<div class="layui-card-header">
-					<div class="ok-card-title">管理员分类及数量</div>
-				</div>
-				<div class="ok-card-body map-body">
-					<div style="height: 300px;" id="adminChart"></div>
-				</div>
-			</div>
-		</div>
-<!--		<div class="layui-col-md6">-->
+<!--	<div class="layui-row layui-col-space15">-->
+<!--		<div class="layui-col-md12">-->
 <!--			<div class="layui-card">-->
 <!--				<div class="layui-card-header">-->
-<!--					<div class="ok-card-title">今日用户访问来源</div>-->
+<!--					<div class="ok-card-title">管理员分类及数量</div>-->
 <!--				</div>-->
 <!--				<div class="ok-card-body map-body">-->
-<!--					<div style="height: 300px;" id="userSourceTodayChart"></div>-->
+<!--					<div style="height: 300px;" id="adminChart"></div>-->
 <!--				</div>-->
 <!--			</div>-->
 <!--		</div>-->
-	</div>
+<!--	</div>-->
 </div>
 <!--js逻辑-->
 <script th:src="@{/lib/layui/layui.js}"></script>
@@ -159,7 +149,7 @@
 			});
 		}
 
-		function add() {
+		function add() {								// 长度，宽度
 			okLayer.open("添加管理员", "admin-add.html", "40%", "70%", null, function () {
 				getSelectData();
 				adminTable.reload();  // 表格重载

@@ -52,6 +52,11 @@ public class MyMVCConfig implements WebMvcConfigurer {
         registry.addViewController("pages/resident/resident-edit.html").setViewName("pages/resident/resident-edit");
         registry.addViewController("pages/resident/resident-add.html").setViewName("pages/resident/resident-add");
 
+        // 党派
+        registry.addViewController("pages/party/party-list.html").setViewName("pages/party/party-list");
+        registry.addViewController("pages/party/party-edit.html").setViewName("pages/party/party-edit");
+        registry.addViewController("pages/party/party-add.html").setViewName("pages/party/party-add");
+
         registry.addViewController("error/404.html").setViewName("error/404");
         registry.addViewController("error/403.html").setViewName("error/403");
         registry.addViewController("error/500.html").setViewName("error/500");

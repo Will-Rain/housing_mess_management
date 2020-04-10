@@ -136,8 +136,20 @@
         ]
       }
     ]
+  },
+  {
+    "title": "辅助功能",
+    "href": "",
+    "icon": "&#xe653;",
+    "spread": false,
+    "children": [
+      {
+        "title": "党派信息",
+        "href": "pages/party/party-list.html",
+        "fontFamily": "layui-icon",
+        "icon": "&#xe613;",
+        "spread": false
+      }
+    ]
   }
-
-
-
 ]

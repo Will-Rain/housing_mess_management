@@ -6,6 +6,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.lz.entity.Party;
 import com.lz.service.PartyService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,25 +28,56 @@ public class PartyController {
     @Resource
     private PartyService partyService;
 
-    /**
-     * 通过主键查询单条数据
-     *
-     * @param id 主键
-     * @return 单条数据
-     */
     @GetMapping("/getAllParty")
-    public String getAllResident(int page, int limit) {
+    public String getAllParty(int page, int limit) {
 //        System.out.println(buildingId + "||" + unitId + "||" + houseId);
-        List<Party> list = partyService.queryAllByLimit(limit * (page - 1), limit); //查询全部数据
+        List<Party> list = partyService.queryAllByLimit(0,0); //查询全部数据
 
         JSONObject obj = new JSONObject();
         obj.put("code", 0);
         obj.put("msg", "");
         obj.put("count", list.size());
-        obj.put("data", JSONObject.parse(JSONArray.toJSONString(list,
+        obj.put("data", JSONObject.parse(JSONArray.toJSONString(partyService.queryAllByLimit(limit * (page - 1), limit),
                 SerializerFeature.DisableCircularReferenceDetect))); //分页查询
 
         return obj.toJSONString();
+    }
+
+    @RequestMapping("/updateParty")
+    public int updateParty(@RequestBody Party party){
+        int msg = 0; //修改失败
+        if (partyService.selectDistinctParty().indexOf(party.getParty()) >= 0) {
+            msg = 2; //此党派已存在
+            return msg;
+        }
+        if(partyService.update(party) !=null){
+            msg = 1; //修改成功
+        }
+        return msg;
+    }
+
+    @RequestMapping("/addParty")
+    public int addParty(@RequestBody Party party){
+        int msg = 0; //插入失败
+
+        if (partyService.selectDistinctParty().indexOf(party.getParty()) >= 0) {
+            msg = 2; //此党派已存在
+            return msg;
+        }
+        if (partyService.insert(party) != null) {
+            msg = 1; //插入成功
+        }
+        return msg;
+    }
+
+    @RequestMapping("/deleteParty")
+    public int deleteParty(String[] idArray){
+        int msg = 1; //成功
+        for (String id : idArray) {
+            if(!partyService.deleteById(Integer.parseInt(id)))
+                msg = 0;
+        }
+        return msg;
     }
 
     @RequestMapping("/selectDistinctParty")

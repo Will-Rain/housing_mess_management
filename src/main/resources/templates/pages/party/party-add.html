@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <title>添加党派</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/css/oksub.css}">
+    <script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+</head>
+<body>
+<div class="ok-body" shiro:hasPermission="1">
+    <!--form表单-->
+    <form class="layui-form layui-form-pane ok-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">党派名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="party" placeholder="请输入党派名称"
+                       autocomplete="off" class="layui-input" lay-verify="required">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="add">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!--js逻辑-->
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script>
+    layui.use(["element", "form", "okLayer", "okUtils"], function () {
+        let form = layui.form;
+        let okLayer = layui.okLayer;
+        let okUtils = layui.okUtils;
+        let $ = layui.$;
+        okLoading.close();
+
+        form.on("submit(add)", function (data) {
+
+            let party = {
+                id: '',
+                party: data.field.party,
+            };
+
+            $.ajax({
+                url: "/party/addParty",
+                type:"put",
+                data: JSON.stringify(party),
+                contentType: "application/json",
+                success:function (response) {
+                    console.log(response);
+                    if(response === 1) {
+                        okLayer.greenTickMsg("添加成功", function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        });
+                    }
+                    else if(response === 2){
+                        okLayer.yellowSighMsg("此党派已存在，不可重复添加",function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        });
+                    }
+                    else if(response === 0){
+                        okLayer.yellowSighMsg("添加失败",function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        });
+                    }
+                },
+                error:function () {
+                    console.log("error");
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

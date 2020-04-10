@@ -69,4 +69,5 @@ public interface PartyDao {
 
     List<String> selectDistinctParty();
 
+
 }
