@@ -41,8 +41,12 @@ public interface ResidentDao {
                                    @Param("limit") int limit);
 
 
-
+    // 按姓名查询
     List<Resident> searchByName(@Param("name") String name, @Param("offset") int offset, @Param("limit") int limit);
+    // 按身份证号查询
+    List<Resident> searchByIdentity(@Param("identityCard") String identityCard, @Param("offset") int offset, @Param("limit") int limit);
+    // 按户籍查询
+    List<Resident> searchByCensus(@Param("censusRegister") String censusRegister, @Param("offset") int offset, @Param("limit") int limit);
 
     /**
      * 通过实体作为筛选条件查询

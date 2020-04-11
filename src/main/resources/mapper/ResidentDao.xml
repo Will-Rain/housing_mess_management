@@ -79,6 +79,36 @@
         </if>
     </select>
 
+<!--    按身份证号查找-->
+    <select id="searchByIdentity" resultMap="ResidentMap">
+        select *
+        from housing_info_management.resident
+        <where>
+            <if test="identityCard != null and identityCard != '' ">
+                and identity_card = #{identityCard}
+            </if>
+        </where>
+        <if test="limit != 0">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+
+<!--    按户籍查找-->
+    <select id="searchByCensus" resultMap="ResidentMap">
+        select *
+        from housing_info_management.resident
+        <where>
+            <if test="censusRegister != null and censusRegister != '' ">
+                and census_register = #{censusRegister}
+            </if>
+        </where>
+        <if test="limit != 0">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">

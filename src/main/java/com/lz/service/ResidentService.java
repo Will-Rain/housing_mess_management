@@ -32,8 +32,13 @@ public interface ResidentService {
      */
     List<Resident> queryAllByLimit(String buildingId, String unitId, String houseId, int offset, int limit);
 
-
+    // 按姓名查询
     List<Resident> searchByName(String name, int offset, int limit);
+    // 按身份证号查询
+    List<Resident> searchByIdentity(String identityCard, int offset, int limit);
+    // 按户籍查询
+    List<Resident> searchByCensus(String censusRegister, int offset, int limit);
+
     /**
      * 新增数据
      *

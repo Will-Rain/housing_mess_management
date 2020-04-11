@@ -5,7 +5,6 @@ import com.lz.dao.ResidentDao;
 import com.lz.dao.UnitDao;
 import com.lz.entity.Building;
 import com.lz.entity.House;
-import com.lz.entity.Party;
 import com.lz.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -67,8 +66,7 @@ class HousingMessManagementApplicationTests {
 
     @Test
     void test4() {
-        Party party = new Party(1,"中国共产党");
-        System.out.println(partyService.selectDistinctParty().indexOf(party.getParty()));
+        System.out.println(residentDao.searchByIdentity("341602197003153077",0,0));
 
     }
 

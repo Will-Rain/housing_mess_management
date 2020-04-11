@@ -39,15 +39,79 @@
 		</form>
 
 
-		<form class="layui-form"  lay-filter="searchByName">
-			<div class="layui-form-item">
-				<label class="layui-form-label" style="color: red">按姓名查询</label>
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md6">
+				<form class="layui-form"  lay-filter="searchByName">
+					<div class="layui-form-item">
+						<label class="layui-form-label" style="color: red">按姓名查询</label>
+						<div class="layui-inline">
+							<div class="layui-input-inline">
+								<input type="text" id="searchByName" placeholder="支持模糊查询" name="name" class="layui-input">
+							</div>
+							<div class="layui-input-inline">
+								<button class="layui-btn" lay-submit="" lay-filter="searchByName">
+									<i class="layui-icon">&#xe615;</i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<div class="layui-col-md6">
+				<form class="layui-form"  lay-filter="searchByIdentity">
+					<div class="layui-form-item">
+						<label class="layui-form-label" style="color: red">按身份证查</label>
+						<div class="layui-inline">
+							<div class="layui-input-inline">
+								<input type="text" id="searchByIdentity" placeholder="请输入身份证号" name="identity" class="layui-input">
+							</div>
+							<div class="layui-input-inline">
+								<button class="layui-btn" lay-submit="" lay-filter="searchByIdentity">
+									<i class="layui-icon">&#xe615;</i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+
+
+<!--		<form class="layui-form"  lay-filter="searchByName">-->
+<!--			<div class="layui-form-item">-->
+<!--				<label class="layui-form-label" style="color: red">按姓名查询</label>-->
+<!--				<div class="layui-inline">-->
+<!--					<div class="layui-input-inline">-->
+<!--						<input type="text" id="searchByName" placeholder="支持模糊查询" name="name" class="layui-input">-->
+<!--					</div>-->
+<!--					<div class="layui-input-inline">-->
+<!--						<button class="layui-btn" lay-submit="" lay-filter="searchByName">-->
+<!--							<i class="layui-icon">&#xe615;</i>-->
+<!--						</button>-->
+<!--					</div>-->
+<!--				</div>-->
+<!--			</div>-->
+<!--		</form>-->
+
+
+		<form class="layui-form"  lay-filter="searchByCensus">
+			<div class="layui-form-item" id="area-picker">
+				<label class="layui-form-label" style="color: red">按户籍查询</label>
 				<div class="layui-inline">
 					<div class="layui-input-inline">
-						<input type="text" id="searchByName" placeholder="支持模糊查询" name="name" class="layui-input">
+						<select name="province" class="province-selector" data-value="山东省" lay-filter="province-1">
+							<option value="">请选择省</option>
+						</select>
+					</div>
+					<div class="layui-input-inline" style="width: 200px;">
+						<select name="city" class="city-selector" data-value="青岛市" lay-filter="city-1">
+							<option value="">请选择市</option>
+						</select>
 					</div>
 					<div class="layui-input-inline">
-						<button class="layui-btn" lay-submit="" lay-filter="searchByName">
+						<button class="layui-btn" lay-submit="" lay-filter="searchByCensus">
 							<i class="layui-icon">&#xe615;</i>
 						</button>
 					</div>
@@ -71,15 +135,32 @@
 <!--js逻辑-->
 <script th:src="@{/lib/layui/layui.js}"></script>
 <script>
+
+	//配置插件目录
+	layui.config({
+		base: '/lib/layui/lay/okmodules/'  //layarea所在文件夹
+	});
+
+
 	var editData;
 
-	layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils"], function () {
+	layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils", "layarea"], function () {
 		let table = layui.table;
 		let form = layui.form;
 		let okLayer = layui.okLayer;
 		let okUtils = layui.okUtils;
 		let $ = layui.jquery;
+		let layarea = layui.layarea;
 		okLoading.close($);
+
+		// 地区联动
+		layarea.render({
+			elem: '#area-picker',
+			change: function (res) {
+				//选择结果
+				// console.log(res.province);
+			}
+		});
 
 		let residentTable = table.render({
 			elem: '#tableId',
@@ -373,6 +454,27 @@
 				page: {curr: 1}
 			});
 			$("#searchByName").val("");
+			return false;
+		});
+
+		form.on("submit(searchByIdentity)", function (data) {
+			residentTable.reload({
+				url: '/resident/searchByIdentity',
+				where: {identity: data.field.identity},
+				page: {curr: 1}
+			});
+			$("#searchByIdentity").val("");
+			return false;
+		});
+
+
+		form.on("submit(searchByCensus)", function (data) {
+			residentTable.reload({
+				url: '/resident/searchByCensus',
+				where: {province: data.field.province, city: data.field.city},
+				page: {curr: 1}
+			});
+			$("#searchByCensus").val("");
 			return false;
 		});
 

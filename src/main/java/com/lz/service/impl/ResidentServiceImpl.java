@@ -60,6 +60,16 @@ public class ResidentServiceImpl implements ResidentService {
         return this.residentDao.searchByName("%" + name + "%", offset, limit); //拼接模糊查询
     }
 
+    @Override
+    public List<Resident> searchByIdentity(String identityCard, int offset, int limit) {
+        return this.residentDao.searchByIdentity(identityCard, 0, 0);
+    }
+
+    @Override
+    public List<Resident> searchByCensus(String censusRegister, int offset, int limit) {
+        return this.residentDao.searchByCensus(censusRegister, 0, 0);
+    }
+
     /**
      * 新增数据
      *

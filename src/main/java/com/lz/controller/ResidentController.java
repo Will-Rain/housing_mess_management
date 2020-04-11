@@ -62,6 +62,36 @@ public class ResidentController {
         return obj.toJSONString();
     }
 
+    @RequestMapping("/searchByIdentity")
+    public String searchByIdentity(int page, int limit, String identity) {
+//        System.out.println("name = " + name);
+        List<Resident> list = residentService.searchByIdentity(identity, 0, 0); //查询全部数据
+
+        JSONObject obj = new JSONObject();
+        obj.put("code", 0);
+        obj.put("msg", "");
+        obj.put("count", list.size());
+        obj.put("data", JSONObject.parse(JSONArray.toJSONString(residentService.searchByIdentity(identity, limit * (page - 1), limit),
+                SerializerFeature.DisableCircularReferenceDetect))); //分页查询
+
+        return obj.toJSONString();
+    }
+
+    @RequestMapping("/searchByCensus")
+    public String searchByCensus(int page, int limit, String province, String city) {
+//        System.out.println(province + city);
+        List<Resident> list = residentService.searchByCensus(province + city, 0, 0); //查询全部数据
+
+        JSONObject obj = new JSONObject();
+        obj.put("code", 0);
+        obj.put("msg", "");
+        obj.put("count", list.size());
+        obj.put("data", JSONObject.parse(JSONArray.toJSONString(residentService.searchByCensus(province + city, limit * (page - 1), limit),
+                SerializerFeature.DisableCircularReferenceDetect))); //分页查询
+
+        return obj.toJSONString();
+    }
+
 
 //先提交form表单，当数据库add成功后，调用click，异步上传图片
 //图片名称由身份证号来查找
