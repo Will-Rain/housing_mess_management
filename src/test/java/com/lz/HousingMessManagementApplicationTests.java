@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+import java.util.Random;
 
 @SpringBootTest
 class HousingMessManagementApplicationTests {
@@ -66,7 +67,21 @@ class HousingMessManagementApplicationTests {
 
     @Test
     void test4() {
-        System.out.println(residentDao.searchByIdentity("341602197003153077",0,0));
+            //创建随机对象
+            Random random=new Random();
+
+            //循环输出号码
+            System.out.println("随机号码");
+            for(int i=0;i<70;i++) {
+                int num;
+                System.out.print("1"+(random.nextInt(7)+3));
+                do {
+                    num=random.nextInt();
+                    if(num>100000000&&num<1000000000) {
+                        System.out.println(num);
+                    }
+                }while(!(num>100000000&&num<1000000000));
+            }
 
     }
 

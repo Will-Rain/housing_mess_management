@@ -145,6 +145,16 @@
 		</div>
 
 
+
+		<div class="layui-form-item" id="checkInTimeDiv">
+			<label class="layui-form-label">入住时间</label>
+			<div class="layui-input-block">
+				<input type="text" name="checkInTime" placeholder="请输入入住时间" autocomplete="off"
+					   class="layui-input" id="checkInTime">
+			</div>
+		</div>
+
+
 		<div class="layui-form-item">
 			<div class="layui-input-block">
 				<button class="layui-btn" lay-submit="" lay-filter="add">立即提交</button>
@@ -177,6 +187,7 @@
 		});
 
 		laydate.render({elem: '#birthday', type: 'date',trigger: 'click'});
+		laydate.render({elem: '#checkInTime', type: 'date',trigger: 'click'});
 		// 地区联动
 		layarea.render({
 			elem: '#area-picker',
@@ -236,7 +247,7 @@
 		function getParty(){ //获取 party
 			okUtils.ajax("/party/selectDistinctParty", "get",
 					{}, false).done(function (response) {
-				console.log(response);
+				// console.log(response);
 
 				let select = $("select[id='party']");
 				select.append("<option value=''>请选择党派</option>");
@@ -333,12 +344,20 @@
 					$("#houseId").val(response);
 					// console.log("response = " + response);
 
-
 					form.render();
 				}).fail(function (error) {
 					console.log(error)
 				});
 			}
+		});
+
+		// 户主可以选择入住时间
+		form.on("select(isHeadOfHousehold)", function (data) {
+			console.log(data.value);
+			if(data.value === '0')
+				$('#checkInTimeDiv').addClass('layui-hide');
+			if(data.value === '1')
+				$('#checkInTimeDiv').removeClass('layui-hide');
 		});
 
 
@@ -362,6 +381,9 @@
 				isHeadOfHousehold: data.field.isHeadOfHousehold,
 				house: {
 					id: data.field.houseId,
+					checkInTime: data.field.checkInTime,
+					saleInfo: 1,
+					houseUseStatus: "自用",
 					unit: {
 						id: data.field.unitId,
 						building: {

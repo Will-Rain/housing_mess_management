@@ -72,6 +72,7 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public Building insert(Building building) {
         this.buildingDao.insert(building);
+        // 添加单元
         for(int i=1;i<=building.getUnitCount();i++) {
             String unitid;
             if (i < 10) //拼接unit.id = buildi.id + unit.unitNumber
@@ -80,7 +81,7 @@ public class BuildingServiceImpl implements BuildingService {
                 unitid = building.getId() + i;
             Unit unit = new Unit(unitid, i, 6, 2, 1, building);
             unitDao.insert(unit);
-
+            // 添加住房
             for (int j = 1; j <= unit.getLayerCount(); j++) {
                 for (int k = 1; k <= unit.getHouseCount(); k++) {
                     String houseNumber;

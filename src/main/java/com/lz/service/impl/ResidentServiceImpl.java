@@ -87,6 +87,9 @@ public class ResidentServiceImpl implements ResidentService {
 //        for(Resident r : residentDao.queryAllByLimit("","",house.getId(),0,0)){
 //            cnt++;
 //        }
+        house.setSaleInfo(resident.getHouse().getSaleInfo());
+        house.setCheckInTime(resident.getHouse().getCheckInTime());
+        house.setHouseUseStatus(resident.getHouse().getHouseUseStatus());
         house.setHousePeopleCount(house.getHousePeopleCount() + 1);
         houseDao.update(house);
 

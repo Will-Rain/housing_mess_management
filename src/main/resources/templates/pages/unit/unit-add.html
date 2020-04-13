@@ -37,7 +37,7 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">每层户数</label>
 			<div class="layui-input-block">
-				<input type="text" name="houseCount" placeholder="请输入每层户数（每层数量不超过10户）" autocomplete="off" class="layui-input"
+				<input type="text" name="houseCount" placeholder="请输入每层户数" autocomplete="off" class="layui-input"
 					   id="houseCount" lay-verify="required|number|ten">
 			</div>
 		</div>
@@ -68,7 +68,7 @@
 
 		form.verify({
 			number: [/^[0-9]*$/,"该项必须是数字"],
-			ten: [/^([1-9]|10)$/,"每层房屋数量不超过10户"]
+			// ten: [/^([1-9]|10)$/,"每层房屋数量不超过10户"]
 		});
 
 		function getSelectData(){
