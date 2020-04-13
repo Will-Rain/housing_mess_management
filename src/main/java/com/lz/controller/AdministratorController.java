@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.Map;
 
 /**
  * (Administrator)表控制层
@@ -60,18 +59,24 @@ public class AdministratorController {
 
 
     @RequestMapping("/deleteAdmin")
-    public int deleteAdmin(String[] nameArray, HttpSession session){
-        int msg = 1; //成功
-        int flag = 0;
+    public String deleteAdmin(String[] nameArray, HttpSession session){
+        String msg = "1"; //成功
+        String myName = null;
         for (String name : nameArray) {
-            if(!administratorService.deleteByName(name))
-                msg = 0;
             if(name.equals(session.getAttribute("name"))){
-                flag = 1;
+                myName = name;
+            }
+            else{
+                if(!administratorService.deleteByName(name))
+                    msg = "0";
             }
         }
-        if(flag==1)
-            session.invalidate();
+
+        if(myName != null){
+            if(!administratorService.deleteByName(myName))
+                msg = "0";
+        }
+
         return msg;
     }
 
@@ -93,30 +98,30 @@ public class AdministratorController {
     }
 
 
-    @RequestMapping("/selectDistinct")
-    public List<String> selectDistinct(String data, String name, String password, HttpSession session){
-//        System.out.println("data = "+data);
-        List<String> list = null;
-        if(data.equals("name")){
-            list = administratorService.selectDistinctName();
-        }
-        if(data.equals("password")){
-            list = administratorService.selectDistinctPassword(name);
-        }
-        if(data.equals("role")){
-            list = administratorService.selectDistinctRole(name,password);
-        }
-        return list;
-    }
+//    @RequestMapping("/selectDistinct")
+//    public List<String> selectDistinct(String data, String name, String password, HttpSession session){
+////        System.out.println("data = "+data);
+//        List<String> list = null;
+//        if(data.equals("name")){
+//            list = administratorService.selectDistinctName();
+//        }
+//        if(data.equals("password")){
+//            list = administratorService.selectDistinctPassword(name);
+//        }
+//        if(data.equals("role")){
+//            list = administratorService.selectDistinctRole(name,password);
+//        }
+//        return list;
+//    }
 
     //对象数组形式
-    @RequestMapping("/getAdminChart")
-    public List<Map<String,Object>> getAdminChart(Administrator administrator){
-//        System.out.println("administrator = "+ administrator);
-        List<Map<String,Object>> list = administratorService.selectToChart(administrator);
-
-        return list;
-    }
+//    @RequestMapping("/getAdminChart")
+//    public List<Map<String,Object>> getAdminChart(Administrator administrator){
+////        System.out.println("administrator = "+ administrator);
+//        List<Map<String,Object>> list = administratorService.selectToChart(administrator);
+//
+//        return list;
+//    }
 
 //    //二维数组形式
 //    @RequestMapping("/getAdminChart")

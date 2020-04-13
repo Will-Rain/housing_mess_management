@@ -66,8 +66,8 @@
          <li class="no-line layui-nav-item">
             <a href="javascript:">
                <img th:src="@{/images/avatar.png}" class="layui-nav-img">
-               <span class="userName" th:text="${session.name}"></span>
-               <span class="role" th:text="${session.role}" style="display: none"></span>
+               <span id="userName" class="userName" th:text="${session.name}"></span>
+               <span id="role" class="role" th:text="${session.role}" style="display: none"></span>
             </a>
 
             <dl id="userInfo" class="layui-nav-child">

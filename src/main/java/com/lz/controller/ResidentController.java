@@ -137,7 +137,7 @@ public class ResidentController {
 
     @RequestMapping("/addResident")
     public int addResident(@RequestBody Resident resident) {
-        System.out.println(resident.toString());
+//        System.out.println(resident.toString());
 
         int msg = 0; //插入失败
 

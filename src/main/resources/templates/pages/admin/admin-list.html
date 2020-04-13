@@ -81,10 +81,10 @@
 					[
 				{type: "checkbox", fixed: "left"},
 				{field: "name", title: "账号", sort: true, fixed:true},
-				{field: "password", title: "密码"},
+				{field: "password", title: "密码", },
 				{field: "role", title: "角色", templet: function (data) {
-					if(data.role === 0) return "普通管理员";
-					else if(data.role === 1) return "超级管理员";
+					if(data.role === 0) return "普通用户";
+					else if(data.role === 1) return "管理员";
 					}},
 				{title: "操作", align: "center", fixed: "right", templet: "#operationTpl"}
 			]
@@ -134,11 +134,14 @@
 						data:{nameArray: nameArray},
 						traditional:true,
 						success:function (response) {
-							if(response === 1){
-								getSelectData();
+							if(response === "1"){
+								// getSelectData();
 								adminTable.reload();
-								initadminChart();  // 刷新图表
+								// initadminChart();  // 刷新图表
 								okUtils.tableSuccessMsg("删除成功");
+							}
+							else{
+								okUtils.tableSuccessMsg("删除失败");
 							}
 						},
 						error:function () {
@@ -151,9 +154,9 @@
 
 		function add() {								// 长度，宽度
 			okLayer.open("添加管理员", "admin-add.html", "40%", "70%", null, function () {
-				getSelectData();
+				// getSelectData();
 				adminTable.reload();  // 表格重载
-				initadminChart();  // 刷新图表
+				// initadminChart();  // 刷新图表
 			})
 		}
 
@@ -172,7 +175,7 @@
 				// iframeWin.initForm(data);
 			}, function () {
 				adminTable.reload();
-				initadminChart();  // 刷新图表
+				// initadminChart();  // 刷新图表
 			})
 		}
 
@@ -186,11 +189,14 @@
 					data:{nameArray: nameArray},
 					traditional:true,
 					success:function (response) {
-						if(response === 1){
-							getSelectData();
+						if(response === "1"){
+							// getSelectData();
 							adminTable.reload();
-							initadminChart();  // 刷新图表
+							// initadminChart();  // 刷新图表
 							okUtils.tableSuccessMsg("删除成功");
+						}
+						else{
+							okUtils.tableSuccessMsg("删除失败");
 						}
 					},
 					error:function () {
@@ -203,6 +209,7 @@
 
 
 
+/*
 
 		function getSelectData(){  //重新渲染select下拉框
 			okUtils.ajax("/administrator/selectDistinct", "get",
@@ -381,9 +388,7 @@
 			});
 		}
 
-		/**
-		 * 管理员分类及数量图表
-		 */
+		//管理员分类及数量图表
 		function initadminChart() {
 			var adminChart = echarts.init($("#adminChart")[0], "theme");
 			adminChart.setOption(adminOption);
@@ -400,7 +405,7 @@
 
 		initadminChart();
 
-
+*/
 
 	})
 </script>
