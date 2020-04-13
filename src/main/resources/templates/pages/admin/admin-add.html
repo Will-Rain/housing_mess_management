@@ -24,15 +24,27 @@
 					   lay-verify="required|password">
 			</div>
 		</div>
+<!--		<div class="layui-form-item">-->
+<!--			<label class="layui-form-label">角色</label>-->
+<!--			<div class="layui-input-block">-->
+<!--				<select name="role">-->
+<!--					<option value="0">普通用户</option>-->
+<!--					<option value="1">管理员</option>-->
+<!--				</select>-->
+<!--			</div>-->
+<!--		</div>-->
+
+
 		<div class="layui-form-item">
 			<label class="layui-form-label">角色</label>
 			<div class="layui-input-block">
-				<select name="role">
-					<option value="0">普通用户</option>
-					<option value="1">管理员</option>
-				</select>
+				<input type="checkbox" id="role" name="role" lay-skin="switch" lay-filter="role"
+					   lay-text="管理员|普通用户" value="1"  checked>
 			</div>
 		</div>
+
+
+
 		<div class="layui-form-item">
 			<div class="layui-input-block">
 				<button class="layui-btn" lay-submit="" lay-filter="add">立即提交</button>
@@ -48,6 +60,7 @@
 		let form = layui.form;
 		let okLayer = layui.okLayer;
 		let okUtils = layui.okUtils;
+		let $ = layui.$;
 		okLoading.close();
 
 		form.verify({
@@ -55,8 +68,20 @@
 		});
 
 
+		// 切换开关 value
+		form.on('switch(role)', function (data) {
+			$("#role").val(this.checked ? 1:0);
+			// console.log($("#role").val());
+		});
+
 		form.on("submit(add)", function (data) {
-			okUtils.ajax("/administrator/addAdmin", "post", data.field, true).done(function (response) {
+			let administrator = {
+				"name": data.field.name,
+				"password": data.field.password,
+				"role": $("#role").val()
+			};
+
+			okUtils.ajax("/administrator/addAdmin", "post", administrator, true).done(function (response) {
 				if(response === 1) {
 					console.log(response);
 					okLayer.greenTickMsg("添加成功", function () {

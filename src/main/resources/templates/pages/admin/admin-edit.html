@@ -23,15 +23,25 @@
 				<input type="text" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input" lay-verify="required">
 			</div>
 		</div>
+<!--		<div class="layui-form-item">-->
+<!--			<label class="layui-form-label">角色</label>-->
+<!--			<div class="layui-input-block">-->
+<!--				<select name="role">-->
+<!--					<option value="0">普通用户</option>-->
+<!--					<option value="1">管理员</option>-->
+<!--				</select>-->
+<!--			</div>-->
+<!--		</div>-->
+
 		<div class="layui-form-item">
 			<label class="layui-form-label">角色</label>
 			<div class="layui-input-block">
-				<select name="role">
-					<option value="0">普通用户</option>
-					<option value="1">管理员</option>
-				</select>
+				<input type="checkbox" id="role" name="role" lay-skin="switch" lay-filter="role"
+					   lay-text="管理员|普通用户" value="1"  checked>
 			</div>
 		</div>
+
+
 		<div class="layui-form-item">
 			<div class="layui-input-block">
 				<button class="layui-btn" lay-submit="" lay-filter="edit">立即提交</button>
@@ -62,20 +72,27 @@
 		let form = layui.form;
 		let okLayer = layui.okLayer;
 		let okUtils = layui.okUtils;
+		let $ = layui.$;
 		okLoading.close();
 
 		initForm(parent.editData);
 		form.val("filter",initData);
 		form.render();
 
+		// 切换开关 value
+		form.on('switch(role)', function (data) {
+			$("#role").val(this.checked ? 1:0);
+			// console.log($("#role").val());
+		});
+
 		form.on("submit(edit)", function (data) {
-			let Administrator = {
+			let administrator = {
 				"name": data.field.name,
 				"password": data.field.password,
-				"role": data.field.role
+				"role": $("#role").val()
 			};
-			okUtils.ajax("/administrator/updateAdmin", "put", Administrator, true).done(function (response) {
-				console.log(response);
+			okUtils.ajax("/administrator/updateAdmin", "put", administrator, true).done(function (response) {
+				// console.log(response);
 				if(response === 1){
 					okLayer.greenTickMsg("修改成功", function () {
 						parent.layer.close(parent.layer.getFrameIndex(window.name));

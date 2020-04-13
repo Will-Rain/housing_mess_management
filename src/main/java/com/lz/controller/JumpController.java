@@ -62,7 +62,7 @@ public class JumpController {
     @RequestMapping("/login")
     @ResponseBody
     public int login(@RequestParam("username") String name, String password, Model model){
-        System.out.println(name+"----"+password);
+//        System.out.println(name+"----"+password);
         int msg;
         // 获取当前的用户
         Subject subject = SecurityUtils.getSubject();
