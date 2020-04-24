@@ -156,7 +156,11 @@ public class ResidentServiceImpl implements ResidentService {
 
     @Override
     public List<Map<String, Object>> statisticalCensusRegister(String buildingId, String unitId) {
-        return this.residentDao.statisticalCensusRegister(buildingId,unitId);
+        List<Map<String, Object>> list = this.residentDao.statisticalCensusRegister(buildingId, unitId);
+        for (Map<String, Object> map : list) {
+            map.put("name", map.remove("home"));
+        }
+        return list;
     }
 
     @Override

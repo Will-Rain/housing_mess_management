@@ -119,7 +119,7 @@ public class HouseController {
     }
     @RequestMapping("/riskTable")
     public String riskTable(int page, int limit, String buildingId, String unitId){
-        System.out.println(buildingId + "||" + unitId);
+//        System.out.println(buildingId + "||" + unitId);
         List<House> list = houseService.riskTable(buildingId, unitId, 0, 0); //查询全部数据
 
         JSONObject obj=new JSONObject();

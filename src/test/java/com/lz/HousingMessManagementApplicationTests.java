@@ -85,5 +85,10 @@ class HousingMessManagementApplicationTests {
 
     }
 
+    @Test
+    void test5(){
+        System.out.println(residentService.statisticalCensusRegister(null,null));
+    }
+
 
 }

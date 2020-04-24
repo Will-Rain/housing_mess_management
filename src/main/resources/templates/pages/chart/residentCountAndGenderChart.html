@@ -46,7 +46,7 @@
         <div class="layui-col-md6">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <div class="ok-card-title">住户数量统计图</div>
+                    <div class="ok-card-title">居民人数统计图</div>
                 </div>
                 <div class="ok-card-body map-body">
                     <div style="height: 300px;" id="peopleCountChart"></div>
@@ -68,7 +68,10 @@
 </body>
 <script th:src="@{/lib/layui/layui.js}"></script>
 <script th:src="@{/lib/echarts/echarts.min.js}"></script>
-<script type="text/javascript" th:src="@{/lib/echarts/world/js/china.js}"></script>
+<!--导出excel-->
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script th:src="@{/js/jquery.table2excel.js}"></script>
+
 <script>
     layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils"], function () {
         let table = layui.table;
@@ -185,15 +188,6 @@
                 orient: 'vertical',
                 left: 10,
             },
-            toolbox: {
-                show: true,
-                right: '10%',
-                feature: {
-                    mark: {show: true},
-                    restore: {show: true},
-                    saveAsImage: {show: true}
-                }
-            },
             tooltip: {},
             series: [
                 {
@@ -264,7 +258,52 @@
                                 value: 'count',
                             },
                         }
-                    ]
+                    ],
+                    toolbox: {
+                        show : true,
+                        right: '10%',
+                        top: 0,
+                        feature : {
+                            mark : {show: true},
+                            // magicType : {show: true, type: ['line', 'bar']},
+                            saveAsImage : {show: true},
+
+                            dataView : {
+                                show: true,
+                                title: building + unit + ' 居民性别统计表',
+                                // readOnly: true,
+                                lang: ['', '关闭', '导出Excel'],
+                                // 使用 table2excel 从表格导出excel
+                                contentToOption: function (opts) {
+                                    $("#tableExcel").table2excel({
+                                        exclude: ".noExl", //过滤位置的 css 类名
+                                        filename: building + unit + '居民性别统计表' + ".xls", //文件名称
+                                        name: "Excel Document Name.xls",
+                                        exclude_img: true,
+                                        exclude_links: true,
+                                        exclude_inputs: true
+                                    });
+                                },
+                                optionToContent:function(opt){
+                                    // console.log(response);
+                                    let tdHeads = `<td style="padding: 9px 30px">性别</td>`; //表头
+                                    let tdBodys = `<td style="padding: 10px 30px">人数</td>`; //数据
+                                    response.forEach(function (item) {
+                                        //组装表头
+                                        tdHeads += `<td style="padding: 9px 30px">${item.xData}</td>`;
+                                        //组装表数据
+                                        tdBodys += `<td style="padding: 10px 30px">${item.count}</td>`;
+                                    });
+                                    let table = `<table id="tableExcel" border="1" style="margin-left:20px;border-collapse:collapse;font-size:14px;text-align:center"><tbody><tr>${tdHeads} </tr>`;
+                                    table += `<tr>${tdBodys}</tr>`;
+                                    table += `</tbody></table>`;
+                                    return table;
+                                }
+                            },
+
+                            restore : {show: true},
+                        }
+                    },
                 });
             }).fail(function (error) {
                 console.log(error)
@@ -283,16 +322,6 @@
         var peopleCountChartOption = {
             color: 'rgba(165,217,117,0.99)',
             legend: {left: 0},
-            toolbox: {
-                show: true,
-                right: '10%',
-                feature: {
-                    mark: {show: true},
-                    magicType: {show: true, type: ['line', 'bar']},
-                    restore: {show: true},
-                    saveAsImage: {show: true}
-                }
-            },
             tooltip: {},
             xAxis: {
                 type: 'category',
@@ -309,6 +338,19 @@
                     type: 'bar',
                     //设置柱状图大小
                     barWidth: 40,
+                    // 条形图上方显示数值
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true, //开启显示
+                                position: 'top', //在上方显示
+                                textStyle: { //数值样式
+                                    color: 'blue',
+                                    fontSize: 16
+                                }
+                            }
+                        }
+                    }
                 }
             ]
         };
@@ -324,7 +366,51 @@
                             name: "人数",
                             encode: {x: 'xData', y: 'count'},
                         }
-                    ]
+                    ],
+                    toolbox: {
+                        show : true,
+                        right: '10%',
+                        top: 0,
+                        feature : {
+                            mark : {show: true},
+                            saveAsImage : {show: true},
+
+                            dataView : {
+                                show: true,
+                                title: '小区居民人数统计表',
+                                // readOnly: true,
+                                lang: ['', '关闭', '导出Excel'],
+                                // 使用 table2excel 从表格导出excel
+                                contentToOption: function (opts) {
+                                    $("#tableExcel").table2excel({
+                                        exclude: ".noExl", //过滤位置的 css 类名
+                                        filename: '小区居民人数统计表' + ".xls", //文件名称
+                                        name: "Excel Document Name.xls",
+                                        exclude_img: true,
+                                        exclude_links: true,
+                                        exclude_inputs: true
+                                    });
+                                },
+                                optionToContent:function(opt){
+                                    // console.log(response);
+                                    let tdHeads = `<td style="padding: 9px 20px">楼号</td>`; //表头
+                                    let tdBodys = `<td style="padding: 10px 20px">人数</td>`; //数据
+                                    response.forEach(function (item) {
+                                        //组装表头
+                                        tdHeads += `<td style="padding: 9px 20px">${item.xData}号楼</td>`;
+                                        //组装表数据
+                                        tdBodys += `<td style="padding: 10px 20px">${item.count}</td>`;
+                                    });
+                                    let table = `<table id="tableExcel" border="1" style="border-collapse:collapse;font-size:14px;text-align:center"><tbody><tr>${tdHeads} </tr>`;
+                                    table += `<tr>${tdBodys}</tr>`;
+                                    table += `</tbody></table>`;
+                                    return table;
+                                }
+                            },
+
+                            restore : {show: true},
+                        }
+                    },
                 });
             }).fail(function (error) {
                 console.log(error)

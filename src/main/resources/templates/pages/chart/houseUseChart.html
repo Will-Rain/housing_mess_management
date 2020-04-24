@@ -74,6 +74,9 @@
 </body>
 <script th:src="@{/lib/layui/layui.js}"></script>
 <script th:src="@{/lib/echarts/echarts.min.js}"></script>
+<!--导出excel-->
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script th:src="@{/js/jquery.table2excel.js}"></script>
 <script>
     layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils"], function () {
         let table = layui.table;
@@ -297,7 +300,52 @@
                                 value: 'count',
                             },
                         }
-                    ]
+                    ],
+                    toolbox: {
+                        show : true,
+                        right: '10%',
+                        top: 0,
+                        feature : {
+                            mark : {show: true},
+                            // magicType : {show: true, type: ['line', 'bar']},
+                            saveAsImage : {show: true},
+
+                            dataView : {
+                                show: true,
+                                title: building + unit + ' 住房使用情况统计表',
+                                // readOnly: true,
+                                lang: ['', '关闭', '导出Excel'],
+                                // 使用 table2excel 从表格导出excel
+                                contentToOption: function (opts) {
+                                    $("#tableExcel").table2excel({
+                                        exclude: ".noExl", //过滤位置的 css 类名
+                                        filename: building + unit + '住房使用情况统计表' + ".xls", //文件名称
+                                        name: "Excel Document Name.xls",
+                                        exclude_img: true,
+                                        exclude_links: true,
+                                        exclude_inputs: true
+                                    });
+                                },
+                                optionToContent:function(opt){
+                                    // console.log(response);
+                                    let tdHeads = `<td style="padding: 9px 30px">使用情况</td>`; //表头
+                                    let tdBodys = `<td style="padding: 10px 30px">数量</td>`; //数据
+                                    response.forEach(function (item) {
+                                        //组装表头
+                                        tdHeads += `<td style="padding: 9px 30px">${item.xData}</td>`;
+                                        //组装表数据
+                                        tdBodys += `<td style="padding: 10px 30px">${item.count}</td>`;
+                                    });
+                                    let table = `<table id="tableExcel" border="1" style="margin-left:20px;border-collapse:collapse;font-size:14px;text-align:center"><tbody><tr>${tdHeads} </tr>`;
+                                    table += `<tr>${tdBodys}</tr>`;
+                                    table += `</tbody></table>`;
+                                    return table;
+                                }
+                            },
+
+                            restore : {show: true},
+                        }
+                    },
                 });
             }).fail(function (error) {
                 console.log(error)

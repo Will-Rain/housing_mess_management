@@ -45,7 +45,8 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <div class="ok-card-title">户籍所在地统计图</div>
+                    <div class="ok-card-title" style="font-size: 25px;text-align: center">
+                        户籍所在地统计图</div>
                 </div>
                 <div class="ok-card-body map-body">
                     <div style="height: 400px;" id="censusRegisterChart"></div>
@@ -57,6 +58,9 @@
 </body>
 <script th:src="@{/lib/layui/layui.js}"></script>
 <script th:src="@{/lib/echarts/echarts.min.js}"></script>
+<!--导出excel-->
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script th:src="@{/js/jquery.table2excel.js}"></script>
 <script type="text/javascript" th:src="@{/lib/echarts/world/js/china.js}"></script>
 <script>
     layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils"], function () {
@@ -257,7 +261,47 @@
                                 value: 'value',
                             },
                         }
-                    ]
+                    ],
+                    toolbox: {
+                        show : true,
+                        right: '10%',
+                        top: 0,
+                        feature : {
+                            mark : {show: true},
+                            saveAsImage : {show: true},
+
+                            dataView : {
+                                show: true,
+                                title: building + unit + ' 居民户籍统计表',
+                                // readOnly: true,
+                                lang: ['', '关闭', '导出Excel'],
+                                // 使用 table2excel 从表格导出excel
+                                contentToOption: function (opts) {
+                                    $("#tableExcel").table2excel({
+                                        exclude: ".noExl", //过滤位置的 css 类名
+                                        filename: building + unit + '居民户籍统计表' + ".xls", //文件名称
+                                        name: "Excel Document Name.xls",
+                                        exclude_img: true,
+                                        exclude_links: true,
+                                        exclude_inputs: true
+                                    });
+                                },
+                                optionToContent:function(opt){
+                                    // console.log(opt);
+                                    let td = `<td style="padding: 10px 30px">地区</td>` + `<td style="padding: 10px 30px">人数</td>`; //第二列
+                                    let table = `<table id="tableExcel" border="1" style="margin-left:20px;border-collapse:collapse;font-size:14px;text-align:center"><tbody><tr>${td}</tr>`;
+                                    response.forEach(function (item) {
+                                        td = `<td style="padding: 9px 30px">${item.name}</td>` + `<td style="padding: 10px 30px">${item.value}</td>`;
+                                        table += `<tr>${td}</tr>`;
+                                    });
+                                    table += `</tbody></table>`;
+                                    return table;
+                                }
+                            },
+
+                            restore : {show: true},
+                        }
+                    },
                 });
 
             }).fail(function (error) {

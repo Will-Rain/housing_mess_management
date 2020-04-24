@@ -272,32 +272,14 @@ layui.use(["element", "layer", "okUtils", "okTab", "okLayer", "okContextMenu", "
 			area: ["330px", "350px"],
 			tab: [{
 				title: "支付宝",
-				content: "<img src='images/zfb.jpg' width='200' height='300' style='margin: 0 auto; display: block;'>"
+				content: "<img src='images' width='200' height='300' style='margin: 0 auto; display: block;'>"
 			}, {
 				title: "微信",
-				content: "<img src='images/wx.jpg' width='200' height='300' style='margin: 0 auto; display: block;'>"
+				content: "<img src='images' width='200' height='300' style='margin: 0 auto; display: block;'>"
 			}]
 		});
 	});
 
-	/**
-	 * QQ群交流
-	 */
-	$("body").on("click", ".layui-footer button.communication, #noticeQQ", function () {
-		layer.tab({
-			area: ["auto", "370px"],
-			tab: [{
-				title: "QQ群3",
-				content: "<img src='images/qq3.png' width='200' height='300' style='margin: 0 auto; display: block;'/>"
-			}, {
-				title: "QQ群2（已满）",
-				content: "<img src='images/qq2.png' width='200' height='300' style='margin: 0 auto; display: block;'/>"
-			}, {
-				title: "QQ群1（已满）",
-				content: "<img src='images/qq1.png' width='200' height='300' style='margin: 0 auto; display: block;'/>"
-			}]
-		});
-	});
 
 	/**
 	 * 弹窗皮肤

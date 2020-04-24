@@ -286,7 +286,7 @@
                 when census_register like '台湾%' then '台湾'
                 else '其他'
             end
-        ) as name,
+        ) as home,
           count(resident.id) as value
         from housing_info_management.resident,housing_info_management.building,
         housing_info_management.unit,housing_info_management.house
@@ -301,7 +301,7 @@
                 and unit.id = #{unitId}
             </if>
         </where>
-        group by census_register
+        group by home
 
     </select>
 
