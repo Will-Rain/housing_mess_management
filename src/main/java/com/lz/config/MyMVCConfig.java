@@ -79,6 +79,10 @@ public class MyMVCConfig implements WebMvcConfigurer {
         registry.addViewController("pages/chart/residentCensusChart.html").setViewName("pages/chart/residentCensusChart");
         registry.addViewController("pages/chart/residentEducationalChart.html").setViewName("pages/chart/residentEducationalChart");
         registry.addViewController("pages/chart/residentPartyChart.html").setViewName("pages/chart/residentPartyChart");
+
+        // 常用搜索
+        registry.addViewController("pages/search/searchResident.html").setViewName("pages/search/searchResident");
+        registry.addViewController("pages/search/searchHouse.html").setViewName("pages/search/searchHouse");
     }
 
     //注册拦截器

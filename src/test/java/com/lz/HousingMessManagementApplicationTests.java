@@ -87,7 +87,7 @@ class HousingMessManagementApplicationTests {
 
     @Test
     void test5(){
-        System.out.println(residentService.statisticalCensusRegister(null,null));
+        System.out.println(houseDao.searchHouseByLimit(null,null,null,-1,0,0));
     }
 
 

@@ -1,26 +1,11 @@
 [
   {
-    "title": "控制台",
+    "title": "首页",
     "href": "pages/console.html",
     "fontFamily": "ok-icon",
     "icon": "&#xe654;",
     "spread": true,
     "isCheck": true
-  },
-  {
-    "title": "管理员信息管理",
-    "href": "",
-    "icon": "&#xe612;",
-    "spread": false,
-    "children": [
-      {
-        "title": "管理员信息列表",
-        "href": "pages/admin/admin-list.html",
-        "fontFamily": "layui-icon",
-        "icon": "&#xe62d;",
-        "spread": false
-      }
-    ]
   },
   {
     "title": "楼房信息管理",
@@ -60,6 +45,28 @@
         "href": "pages/resident/resident-list.html",
         "fontFamily": "layui-icon",
         "icon": "&#xe62d;",
+        "spread": false
+      }
+    ]
+  },
+  {
+    "title": "常用搜索功能",
+    "href": "",
+    "icon": "&#xe615;",
+    "spread": false,
+    "children": [
+      {
+        "title": "搜索居民信息",
+        "href": "pages/search/searchResident.html",
+        "fontFamily": "layui-icon",
+        "icon": "&#xe66f;",
+        "spread": false
+      },
+      {
+        "title": "搜索住房信息",
+        "href": "pages/search/searchHouse.html",
+        "fontFamily": "layui-icon",
+        "icon": "&#xe62a;",
         "spread": false
       }
     ]
@@ -143,6 +150,13 @@
     "icon": "&#xe653;",
     "spread": false,
     "children": [
+      {
+        "title": "管理员信息管理",
+        "href": "pages/admin/admin-list.html",
+        "fontFamily": "layui-icon",
+        "icon": "&#xe612;",
+        "spread": false
+      },
       {
         "title": "党派信息",
         "href": "pages/party/party-list.html",

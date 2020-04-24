@@ -42,6 +42,12 @@ public class HouseServiceImpl implements HouseService {
         return this.houseDao.queryAllByLimit(buildingId,unitId,offset, limit);
     }
 
+    // 搜索住房
+    @Override
+    public List<House> searchHouseByLimit(String buildingId, String unitId, String houseType, int saleInfo, int offset, int limit) {
+        return this.houseDao.searchHouseByLimit(buildingId, unitId, houseType, saleInfo, offset, limit);
+    }
+
     /**
      * 新增数据
      *

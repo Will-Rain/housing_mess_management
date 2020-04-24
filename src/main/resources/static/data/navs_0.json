@@ -1,6 +1,6 @@
 [
   {
-    "title": "控制台",
+    "title": "首页",
     "href": "pages/console.html",
     "fontFamily": "ok-icon",
     "icon": "&#xe654;",
@@ -46,6 +46,28 @@
         "href": "pages/resident/resident-list.html",
         "fontFamily": "layui-icon",
         "icon": "&#xe62d;",
+        "spread": false
+      }
+    ]
+  },
+  {
+    "title": "常用搜索功能",
+    "href": "",
+    "icon": "&#xe615;",
+    "spread": false,
+    "children": [
+      {
+        "title": "搜索居民信息",
+        "href": "pages/search/searchResident.html",
+        "fontFamily": "layui-icon",
+        "icon": "&#xe66f;",
+        "spread": false
+      },
+      {
+        "title": "搜索住房信息",
+        "href": "pages/search/searchHouse.html",
+        "fontFamily": "layui-icon",
+        "icon": "&#xe62a;",
         "spread": false
       }
     ]

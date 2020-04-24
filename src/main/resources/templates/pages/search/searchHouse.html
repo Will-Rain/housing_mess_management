@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <title>住房信息快速搜索</title>
+    <link rel="stylesheet" th:href="@{/css/oksub.css}">
+    <script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
+</head>
+<body>
+<div class="ok-body">
+    <!--搜索区域-->
+    <div class="layui-row">
+        <form class="layui-form"  lay-filter="search">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <input type="hidden" id="buildingId" name="buildingId" class="layui-input">
+                    <div class="layui-input-inline">
+                        <select id="buildingNumber" name="buildingNumber" lay-filter="buildingNumber" lay-search></select>
+                    </div>
+
+                    <input type="hidden" id="unitId" name="unitId" class="layui-input">
+                    <div class="layui-input-inline">
+                        <select id="unitNumber" name="unitNumber" lay-filter="unitNumber" lay-search></select>
+                    </div>
+
+                    <div class="layui-input-inline">
+                        <select id="houseType" name="houseType" lay-filter="houseType" lay-search>
+                            <option value="">选择户型</option>
+                            <option value="一居室">一居室</option>
+                            <option value="二居室">二居室</option>
+                            <option value="三居室">三居室</option>
+                        </select>
+
+                    </div>
+
+                    <div class="layui-input-inline">
+                        <select id="saleInfo" name="saleInfo" lay-filter="saleInfo" lay-search>
+                            <option value="">选择住房出售情况</option>
+                            <option value="0">未售</option>
+                            <option value="1">已售</option>
+                        </select>
+                    </div>
+
+                    <div class="layui-input-inline">
+                        <button class="layui-btn layui-btn-normal" lay-submit="submit" lay-filter="search">
+                            <i class="layui-icon">&#xe615;</i>
+                        </button>
+                        <button class="layui-btn layui-btn-warm" id="reload">
+                            <i class="layui-icon">&#xe669;</i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!--数据表格-->
+    <table class="layui-hide" id="tableId" lay-filter="tableFilter"></table>
+
+</div>
+<script th:src="@{/lib/layui/layui.js}"></script>
+<script>
+    layui.use(["element", "jquery", "table", "form", "okLayer", "okUtils"], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let okLayer = layui.okLayer;
+        let okUtils = layui.okUtils;
+        let $ = layui.jquery;
+        okLoading.close($);
+
+        let houseTable = table.render({
+            elem: '#tableId',
+            url: "/house/searchHouse",
+            where: null,
+            limit: 10,
+            limits: [10,20,30,40,50],
+            page: true,
+            toolbar: "true",
+            totalRow: true,
+            size: "sm",
+            cols: [
+                [
+                    //这里没有写 unit的 id 列，则它就是隐藏域
+                    {field: "buildingNumber", title: "楼宇号",sort: true, fixed:true,
+                        templet: "<div>{{d.unit.building.buildingNumber}} 号楼</div>"},
+                    {field: "unitNumber", title: "单元号", width:70, templet: "<div>{{d.unit.unitNumber}} 单元</div>"},
+                    {field: "houseNumber", title: "房屋号", width:70},
+                    {field: "houseType", title: "户型", width:70},
+                    {field: "houseArea", title: "房屋面积", width:80},
+                    {field: "housePeopleCount", title: "住户人数" , width:80},
+                    {field: "houseRiskLevel", title: "危险性鉴定等级", width:120},
+                    {field: "houseUseStatus", title: "房屋使用现状", width:110 ,templet: function (data) {
+                            if(data.houseUseStatus==null || data.houseUseStatus==='') return "暂未使用";
+                            else return data.houseUseStatus; }},
+                    {field: "roomCount", title: "房间数量", width:80},
+                    {field: "saleInfo", title: "是否出售", width:80, templet: function (data) {
+                            if(data.saleInfo==0) return "未售";
+                            else return "已售";}},
+                    {field: "checkInTime", title: "入住时间",templet: function (data) {
+                            if(data.checkInTime==null)
+                                return "暂无";
+                            return layui.util.toDateString(data.checkInTime,'yyyy-MM-dd')}},
+                ]
+            ],
+            done: function (res, curr, count) {
+                // console.info(res.data);
+            }
+        });
+
+        $("#reload").click(function(){
+            houseTable.reload({
+                url: "/house/searchHouse",
+                where: null,
+                page: {curr: 1}});
+        });
+
+
+        function getSelectData(){ //获取下拉框的值number
+            okUtils.ajax("/building/selectDistinctNumber", "get",
+                {}, false).done(function (response) {
+                // console.log(response.length);
+                let select = $("select[id='buildingNumber']");
+                $("select[id='unitNumber']").empty();
+                select.html("");
+                select.append("<option value=''>请选择楼宇号</option>");
+                $.each(response, function (i, item) {
+                    select.append("<option value="+ item+">"+ item+"号楼</option>");
+                });
+
+                form.render('select','search');
+            }).fail(function (error) {
+                console.log(error)
+            });
+        }
+
+        layer.ready(function () {
+            getSelectData();
+        });
+
+
+        var buildingNumber,unitNumber;
+        form.on("select(buildingNumber)", function (data) {
+            buildingNumber = data.value;
+
+            //填充隐藏域buildingId
+            if(data.value!=='' && data.value!=null){
+                okUtils.ajax("/building/selectDistinctId", "get",
+                    {number:data.value}, false).done(function (response) {
+                    $("#buildingId").val(response);
+
+
+                    //填充unitNumber下拉框
+                    okUtils.ajax("/unit/selectDistinctUnitNumber", "get",
+                        {buildingId: response}, false).done(function (response) {
+                        // console.log(response.length);
+
+                        let select = $("select[id='unitNumber']");
+                        select.empty();
+                        select.html("");
+                        select.append("<option value=''>请选择单元号</option>");
+                        $.each(response, function (i, item) {
+                            select.append("<option value="+ item+">"+ item+"单元</option>");
+                        });
+
+                        form.render('select','search');
+                    }).fail(function (error) {
+                        console.log(error)
+                    });
+
+                    form.render();
+
+                }).fail(function (error) {
+                    console.log(error)
+                });
+            }
+
+        });
+
+        form.on("select(unitNumber)", function (data) {
+            unitNumber = data.value;
+
+            if (data.value !== '' && data.value != null) {
+                okUtils.ajax("/unit/selectDistinctUnitId", "get",
+                    {buildingNumber:buildingNumber, unitNumber: data.value}, false).done(function (response) {
+                    $("#unitId").val(response);
+                    console.log("response = " + response);
+                    form.render();
+
+                }).fail(function (error) {
+                    console.log(error)
+                });
+            }
+        });
+
+
+        form.on("submit(search)", function (data) {
+            houseTable.reload({
+                url: "/house/searchHouse",
+                where: {buildingId: data.field.buildingId, unitId: data.field.unitId,
+                houseType: data.field.houseType, saleInfo: data.field.saleInfo},
+                page: {curr: 1}
+            });
+
+            getSelectData();
+            $("#buildingId").val("");
+            $("#unitId").val("");
+            $("#houseType").val("");
+            $("#saleInfo").val("");
+
+            return false;
+        });
+
+    })
+</script>
+</body>
+</html>

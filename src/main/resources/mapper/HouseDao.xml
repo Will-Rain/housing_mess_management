@@ -23,7 +23,7 @@
         select
           id, house_number, house_type, house_area, house_people_count, house_risk_level, house_use_status, room_count,
           sale_info, check_in_time, unit_id
-        from house
+        from housing_info_management.house
         where id = #{id}
     </select>
 
@@ -32,7 +32,7 @@
         select
         house.id, house_number, house_type, house_area, house_people_count, house_risk_level, house_use_status, room_count,
         sale_info, check_in_time, unit_id
-        from house,building,unit
+        from housing_info_management.house,housing_info_management.building,housing_info_management.unit
         <where>
             house.unit_id = unit.id and unit.building_id = building.id
             <if test="buildingId != null and buildingId != '' ">
@@ -47,10 +47,33 @@
         </if>
     </select>
 
+    <select id="searchHouseByLimit" resultMap="HouseMap">
+        select *
+        from housing_info_management.house,housing_info_management.building,housing_info_management.unit
+        <where>
+            house.unit_id = unit.id and unit.building_id = building.id
+            <if test="buildingId != null and buildingId != '' ">
+                and building.id = #{buildingId}
+            </if>
+            <if test="unitId != null and unitId != '' ">
+                and unit_id = #{unitId}
+            </if>
+            <if test="houseType != null and houseType != '' ">
+                and house_type = #{houseType}
+            </if>
+            <if test="saleInfo != -1">
+                and sale_info = #{saleInfo}
+            </if>
+        </where>
+        <if test="limit != 0">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into house(id, house_number, house_type, house_area, house_people_count,
+        insert into housing_info_management.house(id, house_number, house_type, house_area, house_people_count,
          house_risk_level, house_use_status, room_count, sale_info, check_in_time, unit_id)
         values (#{id}, #{houseNumber}, #{houseType}, #{houseArea}, #{housePeopleCount}, #{houseRiskLevel},
          #{houseUseStatus}, #{roomCount}, #{saleInfo}, #{checkInTime}, #{unit.id})
@@ -58,7 +81,7 @@
 
     <!--通过主键修改数据-->
     <update id="update">
-        update house
+        update housing_info_management.house
         <set>
             <if test="houseNumber != null">
                 house_number = #{houseNumber},
@@ -96,14 +119,14 @@
 
     <!--通过主键删除-->
     <delete id="deleteById">
-        delete from house where id = #{id}
+        delete from housing_info_management.house where id = #{id}
     </delete>
 
 
     <select id="selectDistinctHouseNumber" resultType="java.lang.Integer">
         select
         distinct house.house_number
-        from house
+        from housing_info_management.house
         <where>
             <if test="unitId != null and unitId != ''">
                 and  unit_id = #{unitId}
@@ -115,7 +138,7 @@
         select
           house.id, house_number, house_type, house_area, house_people_count, house_risk_level,
           house_use_status, room_count, sale_info, check_in_time, unit_id
-        from building, unit, house
+        from housing_info_management.building, housing_info_management.unit, housing_info_management.house
         where building_number = #{buildingNumber} and building.id = unit.building_id
             and unit_number = #{unitNumber} and unit.id = house.unit_id
             and house_number = #{houseNumber}
@@ -124,7 +147,7 @@
 
     <select id="riskChart" resultType="java.util.Map">
         select house_risk_level as xData,count(house.id) as count
-        from building, unit, house
+        from housing_info_management.building, housing_info_management.unit, housing_info_management.house
         <where>
             house.unit_id = unit.id and unit.building_id = building.id
             <if test="buildingId != null and buildingId != '' ">
@@ -140,7 +163,7 @@
         select
         house.id, house_number, house_type, house_area, house_people_count, house_risk_level, house_use_status, room_count,
         sale_info, check_in_time, unit_id
-        from house,building,unit
+        from housing_info_management.house,housing_info_management.building,housing_info_management.unit
         <where>
             house.unit_id = unit.id and unit.building_id = building.id
             and (house_risk_level = 'C' or house_risk_level = 'D')
@@ -159,7 +182,7 @@
 <!--   查询住房使用情况-->
     <select id="useChart" resultType="java.util.Map">
         select house_use_status as xData, count(house.id) as count
-        from building, unit, house
+        from housing_info_management.building, housing_info_management.unit, housing_info_management.house
         <where>
             house.unit_id = unit.id and unit.building_id = building.id
             and sale_info = 1
@@ -183,7 +206,7 @@
             end
         ) as xData,
          count(house.id) as count
-        from building, unit, house
+        from housing_info_management.building, housing_info_management.unit, housing_info_management.house
         <where>
             house.unit_id = unit.id and unit.building_id = building.id
             <if test="buildingId != null and buildingId != '' ">
@@ -199,7 +222,7 @@
         select
         house.id, house_number, house_type, house_area, house_people_count, house_risk_level,
                house_use_status, room_count, sale_info, check_in_time, unit_id
-        from house,building,unit
+        from housing_info_management.house,housing_info_management.building,housing_info_management.unit
         <where>
             house.unit_id = unit.id and unit.building_id = building.id
             and sale_info = 0
@@ -215,13 +238,13 @@
         </if>
     </select>
     <select id="getHouseCount" resultType="java.lang.String">
-        select count(*) from house;
+        select count(*) from housing_info_management.house;
     </select>
 
     <!--    近十年居民数量变化图-->
     <select id="ResidentCheckInNumberChart" resultType="java.util.Map">
         select year(check_in_time) as xData, count(*) as count
-        from house, resident
+        from housing_info_management.house, housing_info_management.resident
         where resident.house_id = house.id
         group by xData
     </select>

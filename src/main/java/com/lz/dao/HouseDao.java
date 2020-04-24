@@ -33,7 +33,16 @@ public interface HouseDao {
      * @param limit 查询条数
      * @return 对象列表
      */
-    List<House> queryAllByLimit(@Param("buildingId") String buildingId, @Param("unitId") String unitId, @Param("offset") int offset, @Param("limit") int limit);
+    List<House> queryAllByLimit(@Param("buildingId") String buildingId,
+                                @Param("unitId") String unitId,
+                                @Param("offset") int offset,
+                                @Param("limit") int limit);
+
+    List<House> searchHouseByLimit(@Param("buildingId") String buildingId,
+                                   @Param("unitId") String unitId,
+                                   @Param("houseType") String houseType,
+                                   @Param("saleInfo") int saleInfo,
+                                   @Param("offset") int offset, @Param("limit") int limit);
 
 
     /**

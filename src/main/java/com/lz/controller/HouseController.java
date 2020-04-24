@@ -48,6 +48,23 @@ public class HouseController {
         return obj.toJSONString();
     }
 
+    @RequestMapping("/searchHouse")
+    public String searchHouse(String buildingId, String unitId, String houseType,
+                              String saleInfo, int page, int limit){
+//        System.out.println(buildingId + "===>>>" + unitId);
+        if(null == saleInfo || "".equals(saleInfo))
+            saleInfo = "-1"; // -1表示不用比较该字段
+        List<House> list = houseService.searchHouseByLimit(buildingId,unitId,houseType,Integer.parseInt(saleInfo),0,0); //查询全部数据
+
+        JSONObject obj=new JSONObject();
+        obj.put("code", 0);
+        obj.put("msg", "");
+        obj.put("count", list.size());
+        obj.put("data", JSONObject.parse(JSONArray.toJSONString(houseService.searchHouseByLimit(buildingId,unitId,houseType,Integer.parseInt(saleInfo), limit * (page - 1), limit), SerializerFeature.DisableCircularReferenceDetect))); //分页查询
+
+        return obj.toJSONString();
+    }
+
 
     @RequestMapping("/updateHouse")
     public int updateHouse(@RequestBody House house){

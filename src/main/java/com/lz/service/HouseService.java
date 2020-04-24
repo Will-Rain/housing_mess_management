@@ -30,6 +30,9 @@ public interface HouseService {
      */
     List<House> queryAllByLimit(String buildingId,String unitId,int offset, int limit);
 
+    List<House> searchHouseByLimit(String buildingId, String unitId, String houseType, int saleInfo,
+                                   int offset, int limit);
+
     /**
      * 新增数据
      *
