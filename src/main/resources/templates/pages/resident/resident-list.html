@@ -158,13 +158,13 @@
 					[
 				{type: "checkbox", fixed: "left", style:"height:140px;"},
 							// data.id 没必要显示，即为隐藏域
-				{field: "buildingNumber", title: "楼宇号",width:70,
+				{field: "buildingNumber", title: "楼宇号",width:70, align:'center',
 					templet: "<div>{{d.house.unit.building.buildingNumber}}号楼</div>"},
-				{field: "unitNumber", title: "单元号", width:70,
+				{field: "unitNumber", title: "单元号", width:70, align:'center',
 					templet: "<div>{{d.house.unit.unitNumber}}单元</div>"},
-				{field: "houseNumber", title: "房屋号", width:70,
+				{field: "houseNumber", title: "房屋号", width:70, align:'center',
 					templet: "<div>{{d.house.houseNumber}}室</div>"},
-				{field: "name", title: "姓名", width:70},
+				{field: "name", title: "姓名", width:70, align:'center'},
 				{field: "photo", title: "照片",  align:'center', width:130,
 					// templet: '<div><img src="/residentPhoto/{{d.photo}}" ></div>'
 					templet: function (data) {
@@ -172,20 +172,21 @@
 							return "暂无";
 						else
 							return '<div><img src="/residentPhoto/ ' + data.photo + ' " ></div>'
-
 					}
 				},
-				{field: "gender", title: "性别", width:60},
-				{field: "birthday", title: "生日", align:'center', width:100, templet: function (data) {
+				{field: "gender", title: "性别", width:60, align:'center'},
+				{field: "birthday", title: "生日", align:'center', width:70,
+					templet: function (data) {
 						if(data.birthday==null) return "暂无";
 						return layui.util.toDateString(data.birthday,'yyyy-MM-dd')}},
-				{field: "telephoneNumber", title: "手机号码" , align:'center', width:110},
-				{field: "identityCard", title: "身份证号", align:'center', width:160},
-				{field: "censusRegister", title: "户籍", align:'center', width:110},
-				{field: "educationalLevel", title: "教育程度", width:80,},
-				{field: "party", title: "所属党派", width:100,
+				{field: "telephoneNumber", title: "手机号" , align:'center', width:70},
+				{field: "identityCard", title: "身份证", align:'center', width:70,},
+				{field: "censusRegister", title: "户籍", align:'center', width:70},
+				{field: "educationalLevel", title: "学历", width:70, align:'center'},
+				{field: "party", title: "党派", width:70, align:'center',
 					templet: "<div>{{d.party.party}}</div>"},
-				{field: "isHeadOfHousehold", title: "是否是户主", width:100,templet: function (data) {
+				{field: "isHeadOfHousehold", title: "户主", width:60, align:'center',
+					templet: function (data) {
 						if(data.isHeadOfHousehold == 0) return "否";
 						else return "是";}},
 

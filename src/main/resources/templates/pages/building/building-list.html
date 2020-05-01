@@ -58,14 +58,15 @@
 					[
 				{type: "checkbox", fixed: "left"},
 				//这里没有写 id 列，则它就是隐藏域
-				{field: "buildingNumber", title: "楼宇号", sort: true, fixed:true,
+				{field: "buildingNumber", title: "楼宇号", sort: true, fixed:true, align:'center',
 					templet: "<div>{{d.buildingNumber}} 号楼</div>" },
-				{field: "constructionTime", title: "建筑时间", templet: function (data) {
-					return layui.util.toDateString(data.constructionTime,'yyyy-MM-dd')
+				{field: "constructionTime", title: "建筑时间", align:'center',
+					templet: function (data) {
+						return layui.util.toDateString(data.constructionTime,'yyyy-MM-dd')
 				}},
-				{field: "propertyManagementCompany", title: "物业管理公司"},
-				{field: "buildingPrincipal", title: "楼宇负责人"},
-				{field: "unitCount", title: "单元数量"},
+				{field: "propertyManagementCompany", title: "物业管理公司", align:'center'},
+				{field: "buildingPrincipal", title: "楼宇负责人", align:'center'},
+				{field: "unitCount", title: "单元数量", align:'center'},
 				{title: "操作", align: "center", fixed: "right", templet: "#operationTpl"}
 			]
 			],

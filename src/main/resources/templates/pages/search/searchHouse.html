@@ -47,7 +47,7 @@
                             <i class="layui-icon">&#xe615;</i>
                         </button>
                         <button class="layui-btn layui-btn-warm" id="reload">
-                            <i class="layui-icon">&#xe669;</i>
+                            <i class="layui-icon" th:text="刷新">&#xe669;</i>
                         </button>
                     </div>
                 </div>
@@ -77,26 +77,30 @@
             page: true,
             toolbar: "true",
             totalRow: true,
-            size: "sm",
+            // size: "sm",
             cols: [
                 [
                     //这里没有写 unit的 id 列，则它就是隐藏域
-                    {field: "buildingNumber", title: "楼宇号",sort: true, fixed:true,
+                    {field: "buildingNumber", title: "楼宇号",sort: true, width:100, align:'center',
                         templet: "<div>{{d.unit.building.buildingNumber}} 号楼</div>"},
-                    {field: "unitNumber", title: "单元号", width:70, templet: "<div>{{d.unit.unitNumber}} 单元</div>"},
-                    {field: "houseNumber", title: "房屋号", width:70},
-                    {field: "houseType", title: "户型", width:70},
-                    {field: "houseArea", title: "房屋面积", width:80},
-                    {field: "housePeopleCount", title: "住户人数" , width:80},
-                    {field: "houseRiskLevel", title: "危险性鉴定等级", width:120},
-                    {field: "houseUseStatus", title: "房屋使用现状", width:110 ,templet: function (data) {
+                    {field: "unitNumber", title: "单元号", width:80, align:'center',
+                        templet: "<div>{{d.unit.unitNumber}} 单元</div>"},
+                    {field: "houseNumber", title: "房屋号", width:80, align:'center'},
+                    {field: "houseType", title: "户型", width:80, align:'center'},
+                    {field: "houseArea", title: "房屋面积", width:90, align:'center'},
+                    {field: "housePeopleCount", title: "住户人数" , width:90, align:'center'},
+                    {field: "houseRiskLevel", title: "危险性鉴定等级", width:130, align:'center'},
+                    {field: "houseUseStatus", title: "房屋使用现状", width:120, align:'center',
+                        templet: function (data) {
                             if(data.houseUseStatus==null || data.houseUseStatus==='') return "暂未使用";
                             else return data.houseUseStatus; }},
-                    {field: "roomCount", title: "房间数量", width:80},
-                    {field: "saleInfo", title: "是否出售", width:80, templet: function (data) {
+                    {field: "roomCount", title: "房间数量", width:90, align:'center'},
+                    {field: "saleInfo", title: "是否出售", width:90, align:'center',
+                        templet: function (data) {
                             if(data.saleInfo==0) return "未售";
                             else return "已售";}},
-                    {field: "checkInTime", title: "入住时间",templet: function (data) {
+                    {field: "checkInTime", title: "入住时间", width:140, align:'center',
+                        templet: function (data) {
                             if(data.checkInTime==null)
                                 return "暂无";
                             return layui.util.toDateString(data.checkInTime,'yyyy-MM-dd')}},

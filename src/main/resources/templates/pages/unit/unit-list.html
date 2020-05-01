@@ -58,13 +58,14 @@
 					[
 				{type: "checkbox", fixed: "left"},
 				//这里没有写 unit的 id 列，则它就是隐藏域
-				{field: "building.buildingNumber", title: "楼宇号",width: 150,sort: true, fixed:true,
+				{field: "building.buildingNumber", title: "楼宇号",width: 150, sort: true,
+					fixed:true, align:'center',
 					templet: "<div>{{d.building.buildingNumber}} 号楼</div>"},
-				{field: "unitNumber", title: "单元号", width: 175,
+				{field: "unitNumber", title: "单元号", width: 175, align:'center',
 					templet: "<div>{{d.unitNumber}} 单元</div>"},
-				{field: "layerCount", title: "层数（层）",width: 175},
-				{field: "houseCount", title: "每层户数（户）",width: 175,totalRow:true},
-				{field: "elevatorCount", title: "电梯数量（台）",width: 175,totalRow:true},
+				{field: "layerCount", title: "层数（层）",width: 175, align:'center'},
+				{field: "houseCount", title: "每层户数（户）",width: 175,totalRow:true, align:'center'},
+				{field: "elevatorCount", title: "电梯数量（台）",width: 175,totalRow:true, align:'center'},
 				{title: "操作", align: "center", fixed: "right", templet: "#operationTpl"}
 			]
 			],

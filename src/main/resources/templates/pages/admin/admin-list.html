@@ -80,11 +80,12 @@
 			cols: [
 					[
 				{type: "checkbox", fixed: "left"},
-				{field: "name", title: "账号", sort: true, fixed:true},
-				{field: "password", title: "密码", },
-				{field: "role", title: "角色", templet: function (data) {
-					if(data.role === 0) return "普通用户";
-					else if(data.role === 1) return "管理员";
+				{field: "name", title: "账号", sort: true, fixed:true, align:'center'},
+				{field: "password", title: "密码", align:'center'},
+				{field: "role", title: "角色", align:'center',
+					templet: function (data) {
+						if(data.role === 0) return "普通用户";
+						else if(data.role === 1) return "管理员";
 					}},
 				{title: "操作", align: "center", fixed: "right", templet: "#operationTpl"}
 			]

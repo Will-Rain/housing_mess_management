@@ -133,12 +133,11 @@
             size: "sm",
             cols: [
                 [
-                    // data.id 没必要显示，即为隐藏域
-                    {field: "buildingNumber", title: "楼宇号",width:65,
+                    {field: "buildingNumber", title: "楼宇",width:65,
                         templet: "<div>{{d.house.unit.building.buildingNumber}}号楼</div>"},
-                    {field: "unitNumber", title: "单元号", width:65,
+                    {field: "unitNumber", title: "单元", width:65,
                         templet: "<div>{{d.house.unit.unitNumber}}单元</div>"},
-                    {field: "houseNumber", title: "房屋号", width:65,
+                    {field: "houseNumber", title: "房屋", width:65,
                         templet: "<div>{{d.house.houseNumber}}室</div>"},
                     {field: "name", title: "姓名", width:70},
                     {field: "photo", title: "照片",  align:'center', width:130,
@@ -171,10 +170,8 @@
         });
 
         table.on("toolbar(tableFilter)", function (obj) {
-            switch (obj.event) {
-                case "all":
-                    all();
-                    break;
+            if (obj.event === "all") {
+                all();
             }
         });
         function all() {
