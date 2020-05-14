@@ -83,6 +83,7 @@ public class MyMVCConfig implements WebMvcConfigurer {
         // 常用搜索
         registry.addViewController("pages/search/searchResident.html").setViewName("pages/search/searchResident");
         registry.addViewController("pages/search/searchHouse.html").setViewName("pages/search/searchHouse");
+
     }
 
     //注册拦截器

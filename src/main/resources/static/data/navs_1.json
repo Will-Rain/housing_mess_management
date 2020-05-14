@@ -163,6 +163,13 @@
         "fontFamily": "layui-icon",
         "icon": "&#xe613;",
         "spread": false
+      },
+      {
+        "title": "系统监控",
+        "href": "http://localhost/druid/index.html",
+        "fontFamily": "layui-icon",
+        "icon": "&#xe609;",
+        "spread": false
       }
     ]
   }

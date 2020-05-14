@@ -18,11 +18,11 @@
                 <label for="password">密码</label>
                 <input type="password" lay-verify="required|password" name="password" placeholder="请输入密码" autocomplete="off" id="password" class="layui-input">
             </div>
-<!--            <div class="layui-form-item input-item captcha-box">-->
-<!--                <label for="captcha">验证码</label>-->
-<!--                <input type="text" lay-verify="required|captcha" name="captcha" placeholder="请输入验证码" autocomplete="off" id="captcha" maxlength="4" class="layui-input">-->
-<!--                <div class="img ok-none-select" id="captchaImg"></div>-->
-<!--            </div>-->
+            <div class="layui-form-item input-item captcha-box">
+                <label for="captcha">验证码</label>
+                <input type="text" lay-verify="required|captcha" name="captcha" placeholder="请输入验证码" autocomplete="off" id="captcha" maxlength="4" class="layui-input">
+                <div class="img ok-none-select" id="captchaImg"></div>
+            </div>
             <div class="layui-form-item">
                 <button class="layui-btn layui-block" lay-filter="login" lay-submit="">登录</button>
             </div>
@@ -51,18 +51,18 @@
             /**
              * 初始化验证码
              */
-            // let verifyCode = new okGVerify("#captchaImg");
+            let verifyCode = new okGVerify("#captchaImg");
 
             /**
              * 数据校验
              */
             form.verify({
                 password: [/^[\S]{6,50}$/, "密码必须6到50位，且不能出现空格"],
-                // captcha: function (val) {
-                //     if (verifyCode.validate(val) != "true") {
-                //         return verifyCode.validate(val)
-                //     }
-                // }
+                captcha: function (val) {
+                    if (verifyCode.validate(val) != "true") {
+                        return verifyCode.validate(val)
+                    }
+                }
             });
 
             /**
