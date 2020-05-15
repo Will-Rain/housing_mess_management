@@ -16,31 +16,31 @@
 		<input type="hidden" name="buildingId" class="layui-input">
 
 		<div class="layui-form-item">
-			<label class="layui-form-label">楼宇号</label>
+			<label class="layui-form-label requiredDot">楼宇号</label>
 			<div class="layui-input-block">
 				<input type="text" name="buildingNumber" readonly unselectable="on" autocomplete="off" class="layui-input" lay-verify="required">
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<label class="layui-form-label">单元号</label>
+			<label class="layui-form-label requiredDot">单元号</label>
 			<div class="layui-input-block">
 				<input type="text" name="unitNumber" readonly unselectable="on" autocomplete="off" class="layui-input" lay-verify="required">
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<label class="layui-form-label">层数</label>
+			<label class="layui-form-label requiredDot">层数</label>
 			<div class="layui-input-block">
 				<input type="text" name="layerCount" readonly unselectable="on" autocomplete="off" class="layui-input" lay-verify="required">
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<label class="layui-form-label">每层户数</label>
+			<label class="layui-form-label requiredDot">每层户数</label>
 			<div class="layui-input-block">
 				<input type="text" name="houseCount" readonly unselectable="on" autocomplete="off" class="layui-input" lay-verify="required">
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<label class="layui-form-label">电梯数量</label>
+			<label class="layui-form-label requiredDot">电梯数量</label>
 			<div class="layui-input-block">
 				<input type="text" name="elevatorCount" placeholder="请输入本单元中电梯数量" autocomplete="off" class="layui-input"
 					   lay-verify="required|number">
@@ -54,6 +54,13 @@
 		</div>
 	</form>
 </div>
+<style>
+	label.requiredDot:before {
+		content: '* ';
+		color: red;
+		font-size: 20px;
+	}
+</style>
 <!--js逻辑-->
 <script th:src="@{/lib/layui/layui.js}"></script>
 <script>

@@ -167,18 +167,28 @@ public class ResidentController {
 
     @RequestMapping("/updateResident")
     public int updateResident(@RequestBody Resident resident) {
-        System.out.println(resident);
+//        System.out.println(resident);
         int msg = 0; //修改失败
 
         if(residentService.queryById(resident.getId()).getIsHeadOfHousehold() == 1
-                && (residentService.queryById(resident.getId()).getHouse().getHousePeopleCount() > 1)) {
+                && residentService.queryById(resident.getId()).getHouse().getHousePeopleCount() > 1
+                && !resident.getHouse().getId().equals(residentService.queryById(resident.getId()).getHouse().getId()))
+        {
+            msg = 2; //此操作导致原住房中不存在户主，请先确保原住房中仅有户主一人
+            return msg;
+        }
+        if(residentService.queryById(resident.getId()).getIsHeadOfHousehold() == 1
+                && resident.getIsHeadOfHousehold().equals(0)
+                && resident.getHouse().getId().equals(residentService.queryById(resident.getId()).getHouse().getId()))
+        {
             msg = 2; //此操作导致原住房中不存在户主，请先确保原住房中仅有户主一人
             return msg;
         }
         if(resident.getIsHeadOfHousehold() == 1
+                && residentService.queryById(resident.getId()).getIsHeadOfHousehold() == 0
                 && residentService.queryHeadOfHousehold("", "", resident.getHouse().getId()).size() > 0)
         {
-            msg = 3; // 新住房已存在户主，请先更改该居民户主信息
+            msg = 3; // 该住房已存在户主，请先更改该居民户主信息
             return msg;
         }
         if(resident.getIsHeadOfHousehold() ==0

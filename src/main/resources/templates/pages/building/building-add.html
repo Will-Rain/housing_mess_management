@@ -15,35 +15,38 @@
 		<input type="hidden" name="id" class="layui-input" value="">
 
 		<div class="layui-form-item">
-			<label class="layui-form-label">楼宇号</label>
+			<label class="layui-form-label requiredDot">楼宇号</label>
 			<div class="layui-input-block">
-				<input type="text" name="buildingNumber"  placeholder="请输入楼宇号" autocomplete="off" class="layui-input"
-					   lay-verify="required|number">
+				<input type="text" name="buildingNumber"  placeholder="请输入楼宇号" autocomplete="off"
+					   class="layui-input" lay-verify="required|number">
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<label class="layui-form-label">建筑时间</label>
+			<label class="layui-form-label requiredDot">建筑时间</label>
 			<div class="layui-input-block">
-				<input type="text" name="constructionTime" placeholder="请输入建筑时间" autocomplete="off" class="layui-input"
-					   id="constructionTime" lay-verify="required">
+				<input type="text" name="constructionTime" placeholder="请输入建筑时间" autocomplete="off"
+					   class="layui-input" id="constructionTime" lay-verify="required">
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<label class="layui-form-label">物业公司</label>
+			<label class="layui-form-label requiredDot">物业公司</label>
 			<div class="layui-input-block">
-				<input type="text" name="propertyManagementCompany" placeholder="请输入物业管理公司" autocomplete="off" class="layui-input" lay-verify="required">
+				<input type="text" name="propertyManagementCompany" placeholder="请输入物业管理公司"
+					   autocomplete="off" class="layui-input" lay-verify="required">
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<label class="layui-form-label">楼宇负责人</label>
+			<label class="layui-form-label requiredDot">楼宇负责人</label>
 			<div class="layui-input-block">
-				<input type="text" name="buildingPrincipal" placeholder="请输入楼宇负责人" autocomplete="off" class="layui-input" lay-verify="required">
+				<input type="text" name="buildingPrincipal" placeholder="请输入楼宇负责人"
+					   autocomplete="off" class="layui-input" lay-verify="required">
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<label class="layui-form-label">单元数量</label>
+			<label class="layui-form-label requiredDot">单元数量</label>
 			<div class="layui-input-block">
-				<input type="text" name="unitCount" placeholder="请输入该楼宇下单元数量" autocomplete="off" class="layui-input" lay-verify="required">
+				<input type="text" name="unitCount" placeholder="请输入该楼宇下单元数量"
+					   autocomplete="off" class="layui-input" lay-verify="required">
 			</div>
 		</div>
 		<div class="layui-form-item">
@@ -54,6 +57,13 @@
 		</div>
 	</form>
 </div>
+<style>
+	label.requiredDot:before {
+		content: '* ';
+		color: red;
+		font-size: 20px;
+	}
+</style>
 <!--js逻辑-->
 <script th:src="@{/lib/layui/layui.js}"></script>
 <script>
