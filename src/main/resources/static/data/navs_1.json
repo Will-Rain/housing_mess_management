@@ -151,21 +151,21 @@
     "spread": false,
     "children": [
       {
-        "title": "管理员信息管理",
+        "title": "用户信息管理",
         "href": "pages/admin/admin-list.html",
         "fontFamily": "layui-icon",
         "icon": "&#xe612;",
         "spread": false
       },
       {
-        "title": "党派信息",
+        "title": "党派信息管理",
         "href": "pages/party/party-list.html",
         "fontFamily": "layui-icon",
         "icon": "&#xe613;",
         "spread": false
       },
       {
-        "title": "系统监控",
+        "title": "数据源监控",
         "href": "http://localhost/druid/index.html",
         "fontFamily": "layui-icon",
         "icon": "&#xe609;",
