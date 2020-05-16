@@ -98,7 +98,7 @@
             <if test="houseRiskLevel != null and houseRiskLevel != ''">
                 house_risk_level = #{houseRiskLevel},
             </if>
-            <if test="houseUseStatus != null and houseUseStatus != ''">
+            <if test="houseUseStatus != null">
                 house_use_status = #{houseUseStatus},
             </if>
             <if test="roomCount != null">
@@ -107,9 +107,9 @@
             <if test="saleInfo != null">
                 sale_info = #{saleInfo},
             </if>
-            <if test="checkInTime != null">
+
                 check_in_time = #{checkInTime},
-            </if>
+
             <if test="unit.id != null and unit.id != ''">
                 unit_id = #{unit.id},
             </if>

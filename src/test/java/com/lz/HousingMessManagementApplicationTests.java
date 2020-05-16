@@ -4,6 +4,7 @@ import com.lz.dao.HouseDao;
 import com.lz.dao.ResidentDao;
 import com.lz.dao.UnitDao;
 import com.lz.entity.Building;
+import com.lz.entity.House;
 import com.lz.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -81,7 +82,10 @@ class HousingMessManagementApplicationTests {
 
     @Test
     void test5(){
-        System.out.println(houseDao.searchHouseByLimit(null,null,null,-1,0,0));
+        House house = houseDao.queryById("2008080805010102");
+
+        house.setCheckInTime(null);
+        houseDao.update(house);
     }
 
 

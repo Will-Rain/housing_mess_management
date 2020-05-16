@@ -132,8 +132,13 @@ public class ResidentServiceImpl implements ResidentService {
 
 
         house.setHousePeopleCount(house.getHousePeopleCount() - 1);
+        if(house.getHousePeopleCount() == 0) //删除房屋最后一人时，重置房屋信息
+        {
+            house.setHouseUseStatus("");
+            house.setSaleInfo(0);
+            house.setCheckInTime(null);
+        }
         if (this.residentDao.deleteById(id) > 0 && houseDao.update(house) > 0) {
-
             return true;
         } else
             return false;

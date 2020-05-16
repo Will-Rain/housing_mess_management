@@ -89,7 +89,7 @@
             form.on("submit(login)", function (data) {
                 okUtils.ajax("/login", "post", data.field, false).done(function (response) {
                     if(response === 1) {
-                        okLayer.greenTickMsg("登陆成功", function () {
+                        okLayer.greenTickMsg("登录成功", function () {
                             window.location = "../index.html";
                         })
                     }
