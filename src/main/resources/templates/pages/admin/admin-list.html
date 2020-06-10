@@ -3,7 +3,7 @@
 	  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
 	<meta charset="utf-8">
-	<title>管理员列表</title>
+	<title>用户信息列表</title>
 	<link rel="stylesheet" th:href="@{/css/oksub.css}">
 	<script type="text/javascript" th:src="@{/lib/loading/okLoading.js}"></script>
 </head>
@@ -154,7 +154,7 @@
 		}
 
 		function add() {								// 宽度，高度
-			okLayer.open("添加管理员", "admin-add.html", "40%", "70%", null, function () {
+			okLayer.open("添加用户", "admin-add.html", "40%", "70%", null, function () {
 				// getSelectData();
 				adminTable.reload();  // 表格重载
 				// initadminChart();  // 刷新图表
@@ -171,7 +171,7 @@
 		function edit(data) {
 			editData = data;
 			// console.log("editData = "+editData);
-			okLayer.open("更新管理员", "admin-edit.html", "40%", "70%", function (layero) {
+			okLayer.open("更新用户", "admin-edit.html", "40%", "70%", function (layero) {
 				// let iframeWin = window[layero.find("iframe")[0]["name"]];
 				// iframeWin.initForm(data);
 			}, function () {
@@ -348,9 +348,9 @@
 						axisLabel:{
 							formatter: function (value, index) {
 								if(value === 0)
-									return "普通管理员";
+									return "普通用户";
 								else if(value === 1)
-									return "超级管理员";
+									return "管理员";
 							}}},
 					series:[
 						{
@@ -364,9 +364,9 @@
 								formatter: function (params) {
 									// console.log(params.data.role);
 									if(params.data.role === 0)
-										return "普通管理员";
+										return "普通用户";
 									if(params.data.role === 1)
-										return "超级管理员";
+										return "管理员";
 								}
 							},
 							encode:{
